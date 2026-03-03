@@ -1,0 +1,152 @@
+/* ─── Download / Export Modal ───────────────────────────────────────────────── */
+
+.dl-modal { width: 500px; }
+
+/* ── Section label ──────────────────────────────────────────────────────────── */
+.dl-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+/* ── Range chip pills ────────────────────────────────────────────────────────── */
+.dl-range-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+.dl-chip {
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.dl-chip:hover { border-color: var(--primary); color: var(--primary); }
+.dl-chip--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ── Date / month inputs ─────────────────────────────────────────────────────── */
+.dl-date-inputs { margin-bottom: 14px; min-height: 0; }
+
+.dl-input-row {
+  display: flex;
+  gap: 12px;
+}
+.dl-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+.dl-input-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.dl-date-input,
+.dl-select {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.dl-date-input:focus,
+.dl-select:focus { border-color: var(--primary); }
+
+/* ── Preview summary banner ──────────────────────────────────────────────────── */
+.dl-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 9px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.dl-preview--empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.dl-preview strong { color: var(--primary); }
+.dl-preview-dot   { color: var(--text-muted); }
+
+/* ── Format buttons ──────────────────────────────────────────────────────────── */
+.dl-format-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.dl-format-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+  text-align: left;
+}
+.dl-format-btn:hover:not(.dl-format-btn--disabled) {
+  border-color: var(--primary);
+  background: #eef2ff;
+}
+:is([data-theme="dark"], [data-theme="monokai"]) .dl-format-btn:hover:not(.dl-format-btn--disabled) {
+  background: rgba(99, 102, 241, 0.12);
+}
+:is([data-theme="golden"]) .dl-format-btn:hover:not(.dl-format-btn--disabled) {
+  background: rgba(248, 180, 0, 0.08);
+}
+.dl-format-btn--disabled { opacity: 0.4; cursor: not-allowed; }
+
+.dl-format-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.dl-format-text { flex: 1; }
+.dl-format-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.dl-format-sub { font-size: 11px; color: var(--text-muted); }
+.dl-format-arrow {
+  color: var(--text-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
