@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { auth, onAuthStateChanged, logout } from "./Firebase/firebaseConfig";
+import {
+  auth,
+  onAuthStateChanged,
+  logout,
+  getRedirectResult,
+  saveUserToFirestore,
+  saveDefaultSettingsToFireStore,
+} from "./Firebase/firebaseConfig";
 import ExpenseTracker from "./components/ExpenseTracker";
 import AuthModal from "./modals/AuthModal";
 import "./styles/global.css";
@@ -9,6 +16,23 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [toasts, setToasts] = useState([]);
+
+  // ── Handle Google redirect result (mobile sign-in) ───────────────────────
+  // On mobile, signInWithGoogle triggers a page redirect. When the page loads
+  // back, getRedirectResult resolves the pending credential and saves the user.
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          await saveUserToFirestore(result.user);
+          await saveDefaultSettingsToFireStore(result.user);
+        }
+      })
+      .catch(() => {
+        // Redirect errors (e.g. popup closed) are silently ignored here;
+        // onAuthStateChanged below handles the auth state either way.
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Listen to Firebase auth state ────────────────────────────────────────
   useEffect(() => {

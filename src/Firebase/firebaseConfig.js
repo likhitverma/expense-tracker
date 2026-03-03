@@ -5,6 +5,7 @@ import {
   browserLocalPersistence,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -40,14 +41,13 @@ export const googleProvider = new GoogleAuthProvider();
 // Without this, closing the tab signs the user out on some mobile browsers.
 setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-// Re-export onAuthStateChanged so App.js doesn't need a second firebase/auth import
-export { onAuthStateChanged };
+// Re-export so App.js doesn't need a second firebase/auth import
+export { onAuthStateChanged, getRedirectResult };
 
 // ── Auth flow detection ────────────────────────────────────────────────────────
-// iOS Safari blocks signInWithPopup (ITP) → use redirect on iOS only.
-// Android Chrome handles popups fine; signInWithRedirect on Android has known
-// Chrome Custom Tab issues where auth state doesn't restore after redirect.
-const isIOS = /iPhone|iPad/i.test(navigator.userAgent) && !("MSStream" in window);
+// Both iOS Safari and Android browsers block signInWithPopup reliably.
+// Use redirect for any mobile device; popup only on desktop.
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !("MSStream" in window);
 
 // ── Firestore: save user profile on first sign-in ─────────────────────────────
 export const saveUserToFirestore = async (user) => {
@@ -84,7 +84,7 @@ export const saveDefaultSettingsToFireStore = async (user) => {
 // Mobile  → redirect (popup is blocked on iOS/Android browsers).
 // After redirect, App.js handles getRedirectResult() on mount.
 export const signInWithGoogle = async () => {
-  if (isIOS) {
+  if (isMobile) {
     await signInWithRedirect(auth, googleProvider);
     return null; // page navigates away; result resolved via getRedirectResult
   }
