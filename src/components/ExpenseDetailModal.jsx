@@ -1,34 +1,52 @@
-import { CATEGORIES, formatCurrency, formatTime, formatDisplayDate } from "./constants";
+import { CATEGORIES, INCOME_CATEGORIES, formatCurrency, formatTime, formatDisplayDate } from "./constants";
 
 export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
   if (!expense) return null;
 
+  const isIncome = expense.type === "income";
+  const catList = isIncome ? INCOME_CATEGORIES : CATEGORIES;
   const cat =
-    CATEGORIES.find((c) => c.id === expense.category) ||
-    CATEGORIES[CATEGORIES.length - 1];
+    catList.find((c) => c.id === expense.category) ||
+    catList[catList.length - 1];
 
   return (
     <div className="et-modal-overlay" onClick={onClose}>
       <div
-        className="et-modal et-modal--detail"
+        className={`et-modal et-modal--detail${isIncome ? " et-modal--income" : ""}`}
         onClick={(e) => e.stopPropagation()}
-        style={{ "--cat-color": cat.color }}
+        style={{ "--cat-color": isIncome ? "#10b981" : cat.color }}
       >
         {/* ── Close button ── */}
         <div className="et-modal-header">
           <div className="et-modal-title-wrap">
             <span>{cat.icon}</span>
-            <h2>Expense Details</h2>
+            <h2>{isIncome ? "Income Details" : "Expense Details"}</h2>
           </div>
           <button className="et-modal-close" onClick={onClose}>
             <i className="fa fa-xmark" />
           </button>
         </div>
 
+        {/* ── Type badge ── */}
+        <div className="et-detail-type-row">
+          <span className={`et-detail-type-badge${isIncome ? " et-detail-type-badge--income" : " et-detail-type-badge--expense"}`}>
+            <i className={`fa fa-arrow-trend-${isIncome ? "up" : "down"}`} />
+            {isIncome ? "Income Received" : "Expense"}
+          </span>
+        </div>
+
         {/* ── Amount hero ── */}
-        <div className="et-detail-hero" style={{ borderColor: cat.color }}>
+        <div
+          className={`et-detail-hero${isIncome ? " et-detail-hero--income" : ""}`}
+          style={{ borderColor: isIncome ? "#10b981" : cat.color }}
+        >
           <div className="et-detail-cat-icon">{cat.icon}</div>
-          <div className="et-detail-amount">{formatCurrency(expense.amount)}</div>
+          <div
+            className="et-detail-amount"
+            style={{ color: isIncome ? "#10b981" : cat.color }}
+          >
+            {isIncome ? "+" : ""}{formatCurrency(expense.amount)}
+          </div>
           <div className="et-detail-cat-label">{cat.label}</div>
         </div>
 
