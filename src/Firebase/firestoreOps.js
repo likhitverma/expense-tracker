@@ -9,7 +9,7 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "./firebaseConfig"; 
+import { db } from "./firebaseConfig";
 // ── Expenses ───────────────────────────────────────────────────────────────────
 const expensesCol = (uid) => collection(db, "expenseTracker", uid, "expenses");
 const expenseDoc = (uid, expenseId) =>
@@ -28,6 +28,7 @@ export async function loadExpenses(uid) {
       date: data.date ?? "",
       description: data.description ?? "",
       category: data.category ?? "other",
+      type: data.type ?? "expense",
       createdAt: data.createdAt?.toMillis?.() ?? data.createdAt ?? Date.now(),
     };
   });
