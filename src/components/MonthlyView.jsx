@@ -1,23 +1,42 @@
-import { formatCurrency, formatDisplayDate, formatShortDate } from "./constants";
+import {
+  formatCurrency,
+  formatDisplayDate,
+  formatShortDate,
+} from "./constants";
 
 export default function MonthlyView({
   monthlyData,
-  overallTotal,
+  overallSpent,
+  overallEarned,
   totalExpenseCount,
   todayStr,
   expandedMonth,
+  enableIncomeTracking,
   onToggleMonth,
   onDrillDay,
   onSwitchToDaily,
 }) {
+  const overallNet = overallEarned - overallSpent;
+
   return (
     <div className="et-monthly-view">
       {/* ── All-time hero banner ── */}
       <div className="et-monthly-hero">
-        <span className="et-monthly-hero-label">Total All-Time Spend</span>
+        <span className="et-monthly-hero-label">Total All-Time Spent</span>
         <span className="et-monthly-hero-amount">
-          {formatCurrency(overallTotal)}
+          {formatCurrency(overallSpent)}
         </span>
+        {enableIncomeTracking && overallEarned > 0 && (
+          <div className="et-monthly-hero-net-row">
+            <span>Earned: {formatCurrency(overallEarned)}</span>
+            <span
+              className={`et-monthly-hero-net${overallNet >= 0 ? " et-monthly-hero-net--positive" : ""}`}
+            >
+              Net: {overallNet >= 0 ? "+" : ""}
+              {formatCurrency(overallNet)}
+            </span>
+          </div>
+        )}
         <span className="et-monthly-hero-count">
           {totalExpenseCount} transactions across {monthlyData.length} month
           {monthlyData.length !== 1 ? "s" : ""}
@@ -72,9 +91,19 @@ export default function MonthlyView({
                     </div>
                   </div>
                   <div className="et-month-right">
-                    <span className="et-month-total">
-                      {formatCurrency(month.total)}
-                    </span>
+                    <div className="et-month-totals">
+                      <span className="et-month-total">
+                        {formatCurrency(month.spent)}
+                      </span>
+                      {enableIncomeTracking && month.earned > 0 && (
+                        <span
+                          className={`et-month-net-badge${month.net >= 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
+                        >
+                          {month.net >= 0 ? "+" : ""}
+                          {formatCurrency(month.net)} net
+                        </span>
+                      )}
+                    </div>
                     <i
                       className={`fa fa-chevron-down et-month-chevron${isOpen ? " et-month-chevron--open" : ""}`}
                     />
@@ -107,9 +136,19 @@ export default function MonthlyView({
                           </div>
                         </div>
                         <div className="et-day-row-right">
-                          <span className="et-day-total">
-                            {formatCurrency(day.total)}
-                          </span>
+                          <div className="et-day-totals">
+                            <span className="et-day-total">
+                              {formatCurrency(day.spent)}
+                            </span>
+                            {enableIncomeTracking && day.earned > 0 && (
+                              <span
+                                className={`et-day-net${day.net >= 0 ? " et-day-net--positive" : " et-day-net--negative"}`}
+                              >
+                                {day.net >= 0 ? "+" : ""}
+                                {formatCurrency(day.net)}
+                              </span>
+                            )}
+                          </div>
                           <i className="fa fa-chevron-right et-day-arrow" />
                         </div>
                       </button>

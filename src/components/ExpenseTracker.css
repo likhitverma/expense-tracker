@@ -1649,6 +1649,426 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   INCOME TRACKING — Type toggle in modal
+   ══════════════════════════════════════════════════════════════════════════ */
+.et-type-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.et-type-btn {
+  flex: 1;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.18s;
+}
+
+.et-type-btn--active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.et-type-btn--income-active {
+  background: #10b981;
+  color: #fff;
+}
+
+/* Income submit button */
+.et-btn--income {
+  flex: 2;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: #fff;
+}
+.et-btn--income:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+.et-btn--income:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* ── Income card visual distinction ── */
+.et-expense-card--income {
+  border-left-color: #10b981 !important;
+  background: color-mix(in srgb, #10b981 5%, var(--surface));
+}
+
+.et-exp-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.et-income-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.et-exp-amount--income {
+  color: #10b981 !important;
+}
+
+/* ── Income-aware summary cards ── */
+.et-card-spent {
+  border-top: 3px solid var(--danger, #ef4444);
+}
+.et-card-earned {
+  border-top: 3px solid #10b981;
+}
+.et-card-net {
+  border-top: 3px solid var(--text-muted);
+}
+.et-card-net--positive {
+  border-top-color: #10b981;
+}
+.et-card-net--negative {
+  border-top-color: var(--danger, #ef4444);
+}
+.et-card-amount--income {
+  color: #10b981;
+}
+.et-card-amount--positive {
+  color: #10b981;
+}
+.et-card-amount--negative {
+  color: var(--danger, #ef4444);
+}
+
+/* ── Monthly view — hero net row ── */
+.et-monthly-hero-net-row {
+  display: flex;
+  gap: 16px;
+  font-size: 0.8rem;
+  opacity: 0.9;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.et-monthly-hero-net {
+  opacity: 0.7;
+}
+.et-monthly-hero-net--positive {
+  color: #a7f3d0;
+  opacity: 1;
+}
+
+/* ── Monthly view — month card net badge ── */
+.et-month-totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.et-month-net-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+.et-month-net-badge--positive {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.et-month-net-badge--negative {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+/* ── Monthly view — day row net ── */
+.et-day-totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.et-day-net {
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.et-day-net--positive {
+  color: #10b981;
+}
+.et-day-net--negative {
+  color: #ef4444;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DASHBOARD
+   ══════════════════════════════════════════════════════════════════════════ */
+.et-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.et-dash-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+/* Overview cards grid */
+.et-dash-overview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+@media (min-width: 480px) {
+  .et-dash-overview {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.et-dash-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.et-dash-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.et-dash-card--spent {
+  border-top: 3px solid #ef4444;
+}
+.et-dash-card--earned {
+  border-top: 3px solid #10b981;
+}
+.et-dash-card--positive {
+  border-top: 3px solid #10b981;
+}
+.et-dash-card--negative {
+  border-top: 3px solid #ef4444;
+}
+.et-dash-card--count {
+  border-top: 3px solid var(--primary);
+}
+
+.et-dash-card-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.et-dash-card-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.et-dash-card-amount {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.et-dash-card-amount--green {
+  color: #10b981;
+}
+.et-dash-card-amount--red {
+  color: #ef4444;
+}
+
+/* Monthly trend */
+.et-trend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.et-trend-row {
+  display: grid;
+  grid-template-columns: 52px 1fr 90px;
+  align-items: center;
+  gap: 10px;
+}
+
+.et-trend-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.et-trend-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.et-trend-bar-track {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.et-trend-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.et-trend-bar-fill--spent {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+.et-trend-bar-fill--earned {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.et-trend-val {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Legend */
+.et-dash-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: auto;
+}
+.et-legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.et-legend-dot--spent {
+  background: #ef4444;
+}
+.et-legend-dot--earned {
+  background: #10b981;
+}
+
+/* Top categories */
+.et-dash-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.et-dash-cat-row {
+  display: grid;
+  grid-template-columns: 22px 24px 1fr 1fr auto;
+  align-items: center;
+  gap: 6px 8px;
+}
+.et-dash-cat-rank {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-align: right;
+}
+.et-dash-cat-icon {
+  font-size: 1.05rem;
+  text-align: center;
+}
+.et-dash-cat-name {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.et-dash-cat-bar-wrap {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.et-dash-cat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--cat-color, var(--primary));
+  transition: width 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.et-dash-cat-amt {
+  font-size: 0.83rem;
+  font-weight: 800;
+  color: var(--cat-color, var(--primary));
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Quick stats */
+.et-dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+.et-dash-stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.et-dash-stat-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.et-dash-stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.et-dash-stat-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (min-width: 768px) {
   .et-header {
     padding: 12px 28px;

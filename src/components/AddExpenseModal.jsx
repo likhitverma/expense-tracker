@@ -1,4 +1,4 @@
-import { CATEGORIES, CURRENCY } from "./constants";
+import { CATEGORIES, INCOME_CATEGORIES, CURRENCY } from "./constants";
 
 export default function AddExpenseModal({
   onClose,
@@ -10,14 +10,24 @@ export default function AddExpenseModal({
   onDateChange,
   onSubmit,
   savingExpense,
+  enableIncomeTracking,
 }) {
+  const isIncome = form.type === "income";
+  const cats = isIncome ? INCOME_CATEGORIES : CATEGORIES;
+
+  function switchType(newType) {
+    const defaultCat = newType === "income" ? INCOME_CATEGORIES[0].id : "food";
+    setForm((f) => ({ ...f, type: newType, category: defaultCat }));
+    setFormErrors({});
+  }
+
   return (
     <div className="et-modal-overlay" onClick={onClose}>
       <div className="et-modal" onClick={(e) => e.stopPropagation()}>
         <div className="et-modal-header">
           <div className="et-modal-title-wrap">
-            <span>➕</span>
-            <h2>Add Expense</h2>
+            <span>{isIncome ? "💰" : "➕"}</span>
+            <h2>{isIncome ? "Add Income" : "Add Expense"}</h2>
           </div>
           <button className="et-modal-close" onClick={onClose}>
             <i className="fa fa-xmark" />
@@ -25,6 +35,26 @@ export default function AddExpenseModal({
         </div>
 
         <div className="et-modal-body">
+          {/* Type toggle */}
+          {enableIncomeTracking && (
+            <div className="et-type-toggle">
+              <button
+                type="button"
+                className={`et-type-btn${!isIncome ? " et-type-btn--active" : ""}`}
+                onClick={() => switchType("expense")}
+              >
+                <i className="fa fa-arrow-trend-down" /> Expense
+              </button>
+              <button
+                type="button"
+                className={`et-type-btn et-type-btn--income${isIncome ? " et-type-btn--income-active" : ""}`}
+                onClick={() => switchType("income")}
+              >
+                <i className="fa fa-arrow-trend-up" /> Income
+              </button>
+            </div>
+          )}
+
           {/* Amount */}
           <div className="et-form-group et-form-group--large">
             <label htmlFor="et-amount">Amount</label>
@@ -56,7 +86,7 @@ export default function AddExpenseModal({
           <div className="et-form-group">
             <label>Category</label>
             <div className="et-cat-selector">
-              {CATEGORIES.map((cat) => (
+              {cats.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
@@ -114,7 +144,7 @@ export default function AddExpenseModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              placeholder="e.g. Coffee at Starbucks" 
+              placeholder={isIncome ? "e.g. Monthly salary" : "e.g. Coffee at Starbucks"}
               maxLength={100}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
@@ -134,16 +164,16 @@ export default function AddExpenseModal({
             Cancel
           </button>
           <button
-            className="et-btn et-btn--add"
+            className={`et-btn${isIncome ? " et-btn--income" : " et-btn--add"}`}
             onClick={onSubmit}
             disabled={savingExpense}
           >
             {savingExpense ? (
               <span className="et-btn-spinner" />
             ) : (
-              <i className="fa fa-plus" />
+              <i className={`fa fa-${isIncome ? "arrow-trend-up" : "plus"}`} />
             )}
-            {savingExpense ? "Adding…" : "Add Expense"}
+            {savingExpense ? "Adding…" : isIncome ? "Add Income" : "Add Expense"}
           </button>
         </div>
       </div>

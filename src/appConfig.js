@@ -3,6 +3,12 @@
 const featureFlags = {
   ENABLE_GOOGLE_AUTH: true,
   ENABLE_EMAIL_AUTH: true,
+  ENABLE_INCOME_TRACKING: true,
+  TABS: {
+    daily: true,
+    monthly: true,
+    dashboard: true,
+  },
 };
 
 export default featureFlags;

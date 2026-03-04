@@ -14,9 +14,34 @@ export const CATEGORIES = [
   { id: "other", label: "Other", icon: "💡", color: "#6b7280" },
 ];
 
+// ── Income Categories ───────────────────────────────────────────────────────
+export const INCOME_CATEGORIES = [
+  { id: "salary", label: "Salary", icon: "💼", color: "#10b981" },
+  { id: "business", label: "Business", icon: "🏢", color: "#3b82f6" },
+  { id: "rental", label: "Rental", icon: "🏠", color: "#8b5cf6" },
+  { id: "investment", label: "Investment", icon: "📈", color: "#22c55e" },
+  { id: "gift", label: "Gift", icon: "🎁", color: "#f59e0b" },
+  { id: "refund", label: "Refund", icon: "🔄", color: "#8b5cf6" },
+  { id: "boss", label: "Boss", icon: "👨‍🦳", color: "#3b82f6" },
+  { id: "relative", label: "Relative", icon: "👪", color: "#10b981" },
+  { id: "father", label: "Father", icon: "👨‍🍼", color: "#3b82f6" },
+  { id: "mother", label: "Mother", icon: "🤱", color: "#ec4899" },
+  { id: "sibling", label: "Sibling", icon: "👦👧", color: "#f59e0b" },
+  { id: "friend", label: "Friend", icon: "👫", color: "#8b5cf6" },
+  { id: "other_person", label: "Other Person", icon: "🧑", color: "#6b7280" },
+  { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦", color: "#22c55e" },
+  { id: "freelance", label: "Freelance", icon: "💻", color: "#06b6d4" },
+  { id: "other_income", label: "Other", icon: "💰", color: "#22c55e" },
+];
+
 // ── Theme ───────────────────────────────────────────────────────────────────
 export const THEME_ORDER = ["light", "dark", "golden", "monokai"];
-export const THEME_ICONS = { light: "🌞", dark: "🌛", golden: "⭐", monokai: "Ⓜ️" };
+export const THEME_ICONS = {
+  light: "🌞",
+  dark: "🌛",
+  golden: "⭐",
+  monokai: "Ⓜ️",
+};
 export const THEME_LABELS = {
   light: "Light",
   dark: "Dark",

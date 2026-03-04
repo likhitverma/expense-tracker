@@ -5,10 +5,12 @@ import {
   deleteExpense,
 } from "../Firebase/firestoreOps";
 import { uid } from "../utils/helpers";
+import featureFlags from "../appConfig";
 import DownloadModal from "../modals/DownloadModal";
 import Header from "./Header";
 import DailyView from "./DailyView";
 import MonthlyView from "./MonthlyView";
+import Dashboard from "./Dashboard";
 import AddExpenseModal from "./AddExpenseModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import {
@@ -31,7 +33,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   const [expensesLoading, setExpensesLoading] = useState(true);
   const [expenses, setExpenses] = useState([]);
 
-  // ── View: "daily" | "monthly" ─────────────────────────────────────────────
+  // ── View: "daily" | "monthly" | "dashboard" ───────────────────────────────
   const [view, setView] = useState("daily");
 
   // ── Daily view state ──────────────────────────────────────────────────────
@@ -41,7 +43,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   // ── Monthly view state ────────────────────────────────────────────────────
   const [expandedMonth, setExpandedMonth] = useState(null);
 
-  // ── Add expense modal ─────────────────────────────────────────────────────
+  // ── Add expense/income modal ──────────────────────────────────────────────
   const [showModal, setShowModal] = useState(false);
   const [savingExpense, setSavingExpense] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -50,6 +52,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
     time: getCurrentTimeStr(),
     description: "",
     category: "food",
+    type: "expense",
   });
 
   // ── Delete flow ───────────────────────────────────────────────────────────
@@ -96,6 +99,9 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   const currentMonthStr = getMonthStr(selectedDate);
 
   const byDate = expenses.filter((e) => e.date === selectedDate);
+  const byDateExpenses = byDate.filter((e) => (e.type || "expense") === "expense");
+  const byDateIncome = byDate.filter((e) => e.type === "income");
+
   const filteredByCategory =
     activeCategory === "all"
       ? byDate
@@ -104,16 +110,29 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
     b.time.localeCompare(a.time),
   );
 
-  const dayTotal = byDate.reduce((s, e) => s + (e.amount || 0), 0);
+  const daySpent = byDateExpenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const dayEarned = byDateIncome.reduce((s, e) => s + (e.amount || 0), 0);
+
   const monthExpenses = expenses.filter(
     (e) => getMonthStr(e.date) === currentMonthStr,
   );
-  const monthTotal = monthExpenses.reduce((s, e) => s + (e.amount || 0), 0);
-  const overallTotal = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const monthSpent = monthExpenses
+    .filter((e) => (e.type || "expense") === "expense")
+    .reduce((s, e) => s + (e.amount || 0), 0);
+  const monthEarned = monthExpenses
+    .filter((e) => e.type === "income")
+    .reduce((s, e) => s + (e.amount || 0), 0);
+
+  const overallSpent = expenses
+    .filter((e) => (e.type || "expense") === "expense")
+    .reduce((s, e) => s + (e.amount || 0), 0);
+  const overallEarned = expenses
+    .filter((e) => e.type === "income")
+    .reduce((s, e) => s + (e.amount || 0), 0);
 
   const categoryBreakdown = CATEGORIES.map((cat) => ({
     ...cat,
-    total: byDate
+    total: byDateExpenses
       .filter((e) => e.category === cat.id)
       .reduce((s, e) => s + (e.amount || 0), 0),
   })).filter((c) => c.total > 0);
@@ -123,22 +142,39 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
     const map = {};
     expenses.forEach((e) => {
       const m = getMonthStr(e.date);
-      if (!map[m]) map[m] = { monthStr: m, total: 0, count: 0, dayMap: {} };
-      map[m].total += e.amount || 0;
+      if (!map[m])
+        map[m] = { monthStr: m, spent: 0, earned: 0, count: 0, dayMap: {} };
+      const isIncome = e.type === "income";
+      if (isIncome) {
+        map[m].earned += e.amount || 0;
+      } else {
+        map[m].spent += e.amount || 0;
+      }
       map[m].count += 1;
       if (!map[m].dayMap[e.date])
-        map[m].dayMap[e.date] = { total: 0, count: 0 };
-      map[m].dayMap[e.date].total += e.amount || 0;
+        map[m].dayMap[e.date] = { spent: 0, earned: 0, count: 0 };
+      if (isIncome) {
+        map[m].dayMap[e.date].earned += e.amount || 0;
+      } else {
+        map[m].dayMap[e.date].spent += e.amount || 0;
+      }
       map[m].dayMap[e.date].count += 1;
     });
     return Object.values(map)
       .sort((a, b) => b.monthStr.localeCompare(a.monthStr))
       .map((m) => ({
         ...m,
+        total: m.spent,
+        net: m.earned - m.spent,
         label: formatMonthLabel(m.monthStr),
         days: Object.entries(m.dayMap)
           .sort(([a], [b]) => b.localeCompare(a))
-          .map(([date, d]) => ({ date, ...d })),
+          .map(([date, d]) => ({
+            date,
+            ...d,
+            total: d.spent,
+            net: d.earned - d.spent,
+          })),
       }));
   }, [expenses]);
 
@@ -156,6 +192,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       time: getCurrentTimeStr(),
       description: "",
       category: "food",
+      type: "expense",
     });
     setFormErrors({});
     setShowModal(true);
@@ -167,7 +204,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
     if (!form.amount || isNaN(amt) || amt <= 0)
       errors.amount = "Enter a valid positive amount";
     if (!form.time) errors.time = "Time is required";
-     if (!form.description || form.description.trim() === "")
+    if (!form.description || form.description.trim() === "")
       errors.description = "Enter a valid description";
     return errors;
   }
@@ -179,22 +216,26 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       return;
     }
     setSavingExpense(true);
-    const expense = {
+    const record = {
       id: uid(),
       amount: parseFloat(form.amount),
       time: form.time,
       date: selectedDate,
       description: form.description.trim(),
       category: form.category,
+      type: form.type || "expense",
     };
     try {
-      await addExpense(user.uid, expense);
-      setExpenses((prev) => [expense, ...prev]);
+      await addExpense(user.uid, record);
+      setExpenses((prev) => [record, ...prev]);
       setShowModal(false);
-      toast?.("Expense added!", "success");
+      toast?.(
+        record.type === "income" ? "Income added!" : "Expense added!",
+        "success",
+      );
     } catch (err) {
-      console.error("Failed to add expense:", err);
-      toast?.("Failed to save expense. Please try again.", "error");
+      console.error("Failed to add record:", err);
+      toast?.("Failed to save. Please try again.", "error");
     }
     setSavingExpense(false);
   }
@@ -207,7 +248,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       await deleteExpense(user.uid, expenseId);
     } catch (err) {
       console.error("Delete failed:", err);
-      toast?.("Failed to delete expense. Please try again.", "error");
+      toast?.("Failed to delete. Please try again.", "error");
       setDeletingId(null);
       return;
     }
@@ -248,21 +289,33 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
 
       {/* ── View tabs ── */}
       <div className="et-tab-strip">
-        <button
-          className={`et-tab${view === "daily" ? " et-tab--active" : ""}`}
-          onClick={() => setView("daily")}
-        >
-          <i className="fa fa-calendar-day" /> Daily
-        </button>
-        <button
-          className={`et-tab${view === "monthly" ? " et-tab--active" : ""}`}
-          onClick={() => setView("monthly")}
-        >
-          <i className="fa fa-calendar-alt" /> Monthly
-          {monthlyData.length > 0 && (
-            <span className="et-tab-badge">{monthlyData.length}</span>
-          )}
-        </button>
+        {featureFlags.TABS.daily && (
+          <button
+            className={`et-tab${view === "daily" ? " et-tab--active" : ""}`}
+            onClick={() => setView("daily")}
+          >
+            <i className="fa fa-calendar-day" /> Daily
+          </button>
+        )}
+        {featureFlags.TABS.monthly && (
+          <button
+            className={`et-tab${view === "monthly" ? " et-tab--active" : ""}`}
+            onClick={() => setView("monthly")}
+          >
+            <i className="fa fa-calendar-alt" /> Monthly
+            {monthlyData.length > 0 && (
+              <span className="et-tab-badge">{monthlyData.length}</span>
+            )}
+          </button>
+        )}
+        {featureFlags.TABS.dashboard && (
+          <button
+            className={`et-tab${view === "dashboard" ? " et-tab--active" : ""}`}
+            onClick={() => setView("dashboard")}
+          >
+            <i className="fa fa-chart-pie" /> Dashboard
+          </button>
+        )}
       </div>
 
       {/* ── Body ── */}
@@ -275,12 +328,16 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             byDate={byDate}
             sortedExpenses={sortedExpenses}
             categoryBreakdown={categoryBreakdown}
-            dayTotal={dayTotal}
-            monthTotal={monthTotal}
-            overallTotal={overallTotal}
+            daySpent={daySpent}
+            dayEarned={dayEarned}
+            monthSpent={monthSpent}
+            monthEarned={monthEarned}
+            overallSpent={overallSpent}
+            overallEarned={overallEarned}
             monthExpenseCount={monthExpenses.length}
             totalExpenseCount={expenses.length}
             deletingId={deletingId}
+            enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
             onDateChange={(date) => {
               setSelectedDate(date);
               setActiveCategory("all");
@@ -294,13 +351,27 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         {view === "monthly" && (
           <MonthlyView
             monthlyData={monthlyData}
-            overallTotal={overallTotal}
+            overallSpent={overallSpent}
+            overallEarned={overallEarned}
             totalExpenseCount={expenses.length}
             todayStr={todayStr}
             expandedMonth={expandedMonth}
-            onToggleMonth={(m) => setExpandedMonth(expandedMonth === m ? null : m)}
+            enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
+            onToggleMonth={(m) =>
+              setExpandedMonth(expandedMonth === m ? null : m)
+            }
             onDrillDay={drillIntoDay}
             onSwitchToDaily={() => setView("daily")}
+          />
+        )}
+
+        {view === "dashboard" && (
+          <Dashboard
+            expenses={expenses}
+            monthlyData={monthlyData}
+            overallSpent={overallSpent}
+            overallEarned={overallEarned}
+            enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
           />
         )}
       </div>
@@ -322,6 +393,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
           onDateChange={setSelectedDate}
           onSubmit={handleAddExpense}
           savingExpense={savingExpense}
+          enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
         />
       )}
 
