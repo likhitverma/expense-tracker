@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   CATEGORIES,
   formatDisplayDate,
@@ -5,6 +6,7 @@ import {
   formatTime,
   shiftDate,
 } from "./constants";
+import ExpenseDetailModal from "./ExpenseDetailModal";
 
 export default function DailyView({
   selectedDate,
@@ -24,6 +26,8 @@ export default function DailyView({
   onDeleteRequest,
   onAddExpense,
 }) {
+  const [detailExpense, setDetailExpense] = useState(null);
+
   return (
     <>
       {/* ── Date navigator ── */}
@@ -81,7 +85,9 @@ export default function DailyView({
           <div>
             <div className="et-card-label">This Month</div>
             <div className="et-card-amount">{formatCurrency(monthTotal)}</div>
-            <div className="et-card-count">{monthExpenseCount} transactions</div>
+            <div className="et-card-count">
+              {monthExpenseCount} transactions
+            </div>
           </div>
         </div>
         <div className="et-summary-card et-card-total">
@@ -190,15 +196,16 @@ export default function DailyView({
               return (
                 <div
                   key={expense.id}
-                  className={`et-expense-card${deletingId === expense.id ? " et-deleting" : ""}`}
+                  className={`et-expense-card et-expense-card--clickable${deletingId === expense.id ? " et-deleting" : ""}`}
                   style={{ "--cat-color": cat.color }}
+                  onClick={() => setDetailExpense(expense)}
                 >
                   <div className="et-exp-cat-icon">{cat.icon}</div>
-                  <div className="et-exp-info"> 
+                  <div className="et-exp-info">
+                    <div className="et-exp-cat-name">{cat.label}</div>
                     {expense.description && (
-                      <div className="et-exp-cat-name truncate-text" title={expense.description}>{expense.description}</div>
+                      <div className="et-exp-desc">{expense.description}</div>
                     )}
-                    <div className="et-exp-desc">{cat.label}</div>
                     <div className="et-exp-time">
                       <i className="fa fa-clock" /> {formatTime(expense.time)}
                     </div>
@@ -208,7 +215,10 @@ export default function DailyView({
                   </div>
                   <button
                     className="et-del-btn"
-                    onClick={() => onDeleteRequest(expense)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteRequest(expense);
+                    }}
                     title="Delete expense"
                   >
                     <i className="fa fa-trash" />
@@ -219,6 +229,13 @@ export default function DailyView({
           </div>
         )}
       </div>
+
+      {/* ── Expense detail modal ── */}
+      <ExpenseDetailModal
+        expense={detailExpense}
+        onClose={() => setDetailExpense(null)}
+        onDelete={onDeleteRequest}
+      />
     </>
   );
 }
