@@ -114,14 +114,12 @@ export default function AddExpenseModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              placeholder="e.g. Coffee at Starbucks"
-              // className="et-input"
+              placeholder="e.g. Coffee at Starbucks" 
               maxLength={100}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
               }}
               className={`et-input et-desc-input${formErrors.description ? " et-input--error" : ""}`}
-              autoFocus
             />
           </div>
           {formErrors.description && (
