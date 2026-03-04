@@ -94,9 +94,77 @@
   border-color: var(--primary);
 }
 
-/* Back button nudges left on hover */
-.et-icon-btn:first-child:hover {
-  transform: translateX(-2px);
+/* Active state (e.g. user menu open) */
+.et-icon-btn--active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* ── User menu dropdown ─────────────────────────────────────────────────── */
+.et-user-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.et-user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 210px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  z-index: 300;
+  overflow: hidden;
+  animation: et-fade-in 0.15s ease;
+}
+
+.et-user-dropdown-info {
+  padding: 14px 16px 12px;
+}
+
+.et-user-display-name {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.et-user-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-user-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+.et-logout-item {
+  width: 100%;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.et-logout-item:hover {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .et-header-title {
