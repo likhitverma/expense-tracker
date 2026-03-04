@@ -7,7 +7,8 @@ export const CATEGORIES = [
   { id: "shopping", label: "Shopping", icon: "🛍️", color: "#8b5cf6" },
   { id: "bills", label: "Bills", icon: "📋", color: "#ef4444" },
   { id: "Investment", label: "Investment", icon: "📈", color: "#22c55e" },
-  { id: "health", label: "Health", icon: "💊", color: "#10b981" },
+  { id: "health", label: "Health", icon: "🏋️‍♂️", color: "#10b981" },
+  { id: "medicine", label: "Medicine", icon: "💊", color: "#04a818" },
   { id: "entertainment", label: "Entertainment", icon: "🎬", color: "#f43f5e" },
   { id: "temple", label: "Temple", icon: "🛕", color: "#0ea5e9" },
   { id: "other", label: "Other", icon: "💡", color: "#6b7280" },
@@ -15,7 +16,7 @@ export const CATEGORIES = [
 
 // ── Theme ───────────────────────────────────────────────────────────────────
 export const THEME_ORDER = ["light", "dark", "golden", "monokai"];
-export const THEME_ICONS = { light: "☀", dark: "☾", golden: "✦", monokai: "◈" };
+export const THEME_ICONS = { light: "🌞", dark: "🌛", golden: "⭐", monokai: "Ⓜ️" };
 export const THEME_LABELS = {
   light: "Light",
   dark: "Dark",

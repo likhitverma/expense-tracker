@@ -26,11 +26,15 @@ function App() {
         if (result?.user) {
           await saveUserToFirestore(result.user);
           await saveDefaultSettingsToFireStore(result.user);
+          // toast is stable (useCallback with []), safe to call here
+          toast(`Welcome, ${result.user.displayName || result.user.email}! 🎉`, "success");
         }
       })
-      .catch(() => {
-        // Redirect errors (e.g. popup closed) are silently ignored here;
-        // onAuthStateChanged below handles the auth state either way.
+      .catch((err) => {
+        // Only show meaningful errors — null result is normal on non-redirect loads
+        if (err?.code && err.code !== "auth/null-user" && err.code !== "auth/no-current-user") {
+          toast(`Google sign-in failed: ${err.message || err.code}`, "error");
+        }
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
