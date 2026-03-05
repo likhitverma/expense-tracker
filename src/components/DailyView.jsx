@@ -54,7 +54,7 @@ export default function DailyView({
       <div className="et-date-section">
         <button
           className="et-nav-btn"
-          onClick={() => onDateChange(shiftDate(selectedDate, -1))}
+          onClick={() => onDateChange(shiftDate(selectedDate, 0))}
         >
           <i className="fa fa-chevron-left" />
         </button>
@@ -82,7 +82,7 @@ export default function DailyView({
         </div>
         <button
           className="et-nav-btn"
-          onClick={() => onDateChange(shiftDate(selectedDate, 1))}
+          onClick={() => onDateChange(shiftDate(selectedDate, 2))}
         >
           <i className="fa fa-chevron-right" />
         </button>
@@ -295,15 +295,17 @@ export default function DailyView({
                   <div className="et-exp-cat-icon">{cat.icon}</div>
                   <div className="et-exp-info">
                     <div className="et-exp-top-row">
-                      <div className="et-exp-cat-name">{cat.label}</div>
+                      {expense.description && (
+                        <div className="et-exp-desc">{expense.description}</div>
+                      )}
                       {isIncome && (
                         <span className="et-income-badge">
                           <i className="fa fa-arrow-trend-up" /> Income
                         </span>
                       )}
                     </div>
-                    {expense.description && (
-                      <div className="et-exp-desc">{expense.description}</div>
+                    {cat.label && (
+                      <div className="et-exp-cat-name">{cat.label}</div>
                     )}
                     <div className="et-exp-time">
                       <i className="fa fa-clock" /> {formatTime(expense.time)}
