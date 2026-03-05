@@ -14,21 +14,16 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-} from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAOrHbPfFll8T0jzxIYfokqV2ZTrX0rQ-c",
-  authDomain: "expensetracker-cs.firebaseapp.com",
-  projectId: "expensetracker-cs",
-  storageBucket: "expensetracker-cs.firebasestorage.app",
-  messagingSenderId: "808031790552",
-  appId: "1:808031790552:web:57ced9f4a460ff078abead",
-  measurementId: "G-HY28RPCRM8"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 // ── Initialize Firebase ────────────────────────────────────────────────────────
@@ -47,7 +42,9 @@ export { onAuthStateChanged, getRedirectResult };
 // ── Auth flow detection ────────────────────────────────────────────────────────
 // Both iOS Safari and Android browsers block signInWithPopup reliably.
 // Use redirect for any mobile device; popup only on desktop.
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !("MSStream" in window);
+const isMobile =
+  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
+  !("MSStream" in window);
 
 // ── Firestore: save user profile on first sign-in ─────────────────────────────
 export const saveUserToFirestore = async (user) => {
