@@ -39,12 +39,6 @@ setPersistence(auth, browserLocalPersistence).catch(() => {});
 // Re-export so App.js doesn't need a second firebase/auth import
 export { onAuthStateChanged, getRedirectResult };
 
-// ── Auth flow detection ────────────────────────────────────────────────────────
-// Both iOS Safari and Android browsers block signInWithPopup reliably.
-// Use redirect for any mobile device; popup only on desktop.
-const isMobile =
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
-  !("MSStream" in window);
 
 // ── Firestore: save user profile on first sign-in ─────────────────────────────
 export const saveUserToFirestore = async (user) => {
@@ -77,18 +71,27 @@ export const saveDefaultSettingsToFireStore = async (user) => {
 };
 
 // ── Google sign-in ─────────────────────────────────────────────────────────────
-// Desktop → popup (instant UX).
-// Mobile  → redirect (popup is blocked on iOS/Android browsers).
-// After redirect, App.js handles getRedirectResult() on mount.
+// Always try popup first — works on modern iOS/Android browsers too.
+// signInWithRedirect was the old mobile workaround but iOS Safari's ITP clears
+// the cross-site state between the redirect, causing getRedirectResult → null.
+// Fall back to redirect only if the popup is explicitly blocked.
 export const signInWithGoogle = async () => {
-  if (isMobile) {
-    await signInWithRedirect(auth, googleProvider);
-    return null; // page navigates away; result resolved via getRedirectResult
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    await saveUserToFirestore(result.user);
+    await saveDefaultSettingsToFireStore(result.user);
+    return result.user;
+  } catch (err) {
+    // popup-blocked errors on some browsers → fall back to redirect
+    if (
+      err.code === "auth/popup-blocked" ||
+      err.code === "auth/popup-closed-by-user"
+    ) {
+      await signInWithRedirect(auth, googleProvider);
+      return null; // page navigates away; result resolved via getRedirectResult
+    }
+    throw err;
   }
-  const result = await signInWithPopup(auth, googleProvider);
-  await saveUserToFirestore(result.user);
-  await saveDefaultSettingsToFireStore(result.user);
-  return result.user;
 };
 
 // ── Email sign-in ──────────────────────────────────────────────────────────────
