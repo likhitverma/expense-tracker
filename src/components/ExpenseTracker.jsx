@@ -2,7 +2,15 @@ import { useState, useEffect, useMemo } from "react";
 import {
   loadExpenses,
   addExpense,
+  updateExpense,
   deleteExpense,
+  loadOccasions,
+  addOccasion,
+  deleteOccasion,
+  loadOccasionExpenses,
+  addOccasionExpense,
+  updateOccasionExpense,
+  deleteOccasionExpense,
 } from "../Firebase/firestoreOps";
 import { uid } from "../utils/helpers";
 import featureFlags from "../appConfig";
@@ -11,7 +19,11 @@ import Header from "./Header";
 import DailyView from "./DailyView";
 import MonthlyView from "./MonthlyView";
 import Dashboard from "./Dashboard";
+import OccasionsView from "./OccasionsView";
+import OccasionDetailView from "./OccasionDetailView";
 import AddExpenseModal from "./AddExpenseModal";
+import AddOccasionModal from "./AddOccasionModal";
+import OccasionInfoModal from "./OccasionInfoModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import {
   CATEGORIES,
@@ -24,6 +36,7 @@ import {
   persistTheme,
 } from "./constants";
 import "./ExpenseTracker.css";
+import "../styles/occasionsView.css"
 
 export default function ExpenseTracker({ user, onLogout, toast }) {
   // ── Theme ─────────────────────────────────────────────────────────────────
@@ -58,9 +71,32 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   // ── Delete flow ───────────────────────────────────────────────────────────
   const [deletingId, setDeletingId] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  // "daily" | "occasion-expense" | "occasion-card"
+  const [deleteContext, setDeleteContext] = useState("daily");
 
   // ── Download modal ────────────────────────────────────────────────────────
   const [showDownloadModal, setShowDownloadModal] = useState(false);
+
+  // ── Occasions ─────────────────────────────────────────────────────────────
+  const [occasions, setOccasions] = useState([]);
+  const [occasionsLoaded, setOccasionsLoaded] = useState(false);
+  const [selectedOccasion, setSelectedOccasion] = useState(null);
+  const [occasionExpenses, setOccasionExpenses] = useState([]);
+  const [occasionExpensesLoading, setOccasionExpensesLoading] = useState(false);
+  const [showAddOccasionModal, setShowAddOccasionModal] = useState(false);
+  const [savingOccasion, setSavingOccasion] = useState(false);
+  // When adding from within an occasion, we track the date separately
+  // so it doesn't affect the global selectedDate
+  const [occasionDate, setOccasionDate] = useState(getTodayStr);
+  const [addingToOccasion, setAddingToOccasion] = useState(false);
+
+  // ── Edit expense ──────────────────────────────────────────────────────────
+  // "daily" | "occasion-expense"
+  const [editContext, setEditContext] = useState("daily");
+  const [editingExpense, setEditingExpense] = useState(null);
+
+  // ── Occasion info modal ───────────────────────────────────────────────────
+  const [infoOccasion, setInfoOccasion] = useState(null);
 
   // ── Fix: override body overflow so the page scrolls ──────────────────────
   useEffect(() => {
@@ -178,6 +214,37 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       }));
   }, [expenses]);
 
+  // ── Load occasions (lazy, first time tab is opened) ───────────────────────
+  useEffect(() => {
+    if (view !== "occasions" || occasionsLoaded) return;
+    loadOccasions(user.uid)
+      .then((data) => {
+        setOccasions(data);
+        setOccasionsLoaded(true);
+      })
+      .catch((err) => {
+        console.error("Failed to load occasions:", err);
+        toast?.("Failed to load occasions.", "error");
+        setOccasionsLoaded(true);
+      });
+  }, [view, occasionsLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Load expenses for selected occasion ───────────────────────────────────
+  useEffect(() => {
+    if (!selectedOccasion) return;
+    setOccasionExpensesLoading(true);
+    loadOccasionExpenses(user.uid, selectedOccasion.id)
+      .then((data) => {
+        setOccasionExpenses(data);
+        setOccasionExpensesLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load occasion expenses:", err);
+        toast?.("Failed to load expenses.", "error");
+        setOccasionExpensesLoading(false);
+      });
+  }, [selectedOccasion?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ── Handlers ──────────────────────────────────────────────────────────────
   function cycleTheme() {
     const next =
@@ -187,12 +254,46 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   }
 
   function openAddModal() {
+    setAddingToOccasion(false);
     setForm({
       amount: "",
       time: getCurrentTimeStr(),
       description: "",
       category: "food",
       type: "expense",
+    });
+    setFormErrors({});
+    setShowModal(true);
+  }
+
+  function openAddModalForOccasion() {
+    setAddingToOccasion(true);
+    setEditingExpense(null);
+    setOccasionDate(getTodayStr());
+    setForm({
+      amount: "",
+      time: getCurrentTimeStr(),
+      description: "",
+      category: "food",
+      type: "expense",
+    });
+    setFormErrors({});
+    setShowModal(true);
+  }
+
+  function openEditModal(expense, context) {
+    setEditingExpense(expense);
+    setEditContext(context);
+    setAddingToOccasion(context === "occasion-expense");
+    if (context === "occasion-expense") {
+      setOccasionDate(expense.date);
+    }
+    setForm({
+      amount: String(expense.amount),
+      time: expense.time,
+      description: expense.description,
+      category: expense.category,
+      type: expense.type || "expense",
     });
     setFormErrors({});
     setShowModal(true);
@@ -216,19 +317,62 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       return;
     }
     setSavingExpense(true);
+
+    if (editingExpense) {
+      // ── Edit existing record ──
+      const updated = {
+        ...editingExpense,
+        amount: parseFloat(form.amount),
+        time: form.time,
+        date: addingToOccasion ? occasionDate : selectedDate,
+        description: form.description.trim(),
+        category: form.category,
+        type: form.type || "expense",
+      };
+      try {
+        if (editContext === "occasion-expense" && selectedOccasion) {
+          await updateOccasionExpense(user.uid, selectedOccasion.id, updated);
+          setOccasionExpenses((prev) =>
+            prev.map((e) => (e.id === updated.id ? updated : e)),
+          );
+        } else {
+          await updateExpense(user.uid, updated);
+          setExpenses((prev) =>
+            prev.map((e) => (e.id === updated.id ? updated : e)),
+          );
+        }
+        setShowModal(false);
+        setEditingExpense(null);
+        setAddingToOccasion(false);
+        toast?.("Changes saved!", "success");
+      } catch (err) {
+        console.error("Failed to update record:", err);
+        toast?.("Failed to save changes. Please try again.", "error");
+      }
+      setSavingExpense(false);
+      return;
+    }
+
+    // ── Add new record ──
     const record = {
       id: uid(),
       amount: parseFloat(form.amount),
       time: form.time,
-      date: selectedDate,
+      date: addingToOccasion ? occasionDate : selectedDate,
       description: form.description.trim(),
       category: form.category,
       type: form.type || "expense",
     };
     try {
-      await addExpense(user.uid, record);
-      setExpenses((prev) => [record, ...prev]);
+      if (addingToOccasion && selectedOccasion) {
+        await addOccasionExpense(user.uid, selectedOccasion.id, record);
+        setOccasionExpenses((prev) => [record, ...prev]);
+      } else {
+        await addExpense(user.uid, record);
+        setExpenses((prev) => [record, ...prev]);
+      }
       setShowModal(false);
+      setAddingToOccasion(false);
       toast?.(
         record.type === "income" ? "Income added!" : "Expense added!",
         "success",
@@ -241,21 +385,70 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   }
 
   async function executeDelete() {
-    const expenseId = confirmDelete.id;
+    const item = confirmDelete;
     setConfirmDelete(null);
-    setDeletingId(expenseId);
+
+    // Deleting an entire occasion card
+    if (deleteContext === "occasion-card") {
+      setDeleteContext("daily");
+      try {
+        await deleteOccasion(user.uid, item.id);
+        setOccasions((prev) => prev.filter((o) => o.id !== item.id));
+        toast?.("Occasion deleted.", "success");
+      } catch (err) {
+        console.error("Delete occasion failed:", err);
+        toast?.("Failed to delete occasion.", "error");
+      }
+      return;
+    }
+
+    // Deleting an expense (either daily or inside an occasion)
+    setDeletingId(item.id);
     try {
-      await deleteExpense(user.uid, expenseId);
+      if (deleteContext === "occasion-expense" && selectedOccasion) {
+        await deleteOccasionExpense(user.uid, selectedOccasion.id, item.id);
+        setTimeout(() => {
+          setOccasionExpenses((prev) => prev.filter((e) => e.id !== item.id));
+          setDeletingId(null);
+        }, 320);
+      } else {
+        await deleteExpense(user.uid, item.id);
+        setTimeout(() => {
+          setExpenses((prev) => prev.filter((e) => e.id !== item.id));
+          setDeletingId(null);
+        }, 320);
+      }
     } catch (err) {
       console.error("Delete failed:", err);
       toast?.("Failed to delete. Please try again.", "error");
       setDeletingId(null);
-      return;
     }
-    setTimeout(() => {
-      setExpenses((prev) => prev.filter((e) => e.id !== expenseId));
-      setDeletingId(null);
-    }, 320);
+    setDeleteContext("daily");
+  }
+
+  async function handleCreateOccasion(occasionData) {
+    setSavingOccasion(true);
+    const newOccasion = { id: uid(), ...occasionData };
+    try {
+      await addOccasion(user.uid, newOccasion);
+      setOccasions((prev) => [newOccasion, ...prev]);
+      setShowAddOccasionModal(false);
+      toast?.("Occasion created!", "success");
+    } catch (err) {
+      console.error("Failed to create occasion:", err);
+      toast?.("Failed to create occasion.", "error");
+    }
+    setSavingOccasion(false);
+  }
+
+  function requestDeleteOccasionCard(occ) {
+    setDeleteContext("occasion-card");
+    setConfirmDelete(occ);
+  }
+
+  function requestDeleteOccasionExpense(expense) {
+    setDeleteContext("occasion-expense");
+    setConfirmDelete(expense);
   }
 
   function drillIntoDay(dateStr) {
@@ -308,6 +501,18 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             )}
           </button>
         )}
+
+        {featureFlags.TABS.occasions && (
+          <button
+            className={`et-tab${view === "occasions" ? " et-tab--active" : ""}`}
+            onClick={() => { setView("occasions"); setSelectedOccasion(null); }}
+          >
+            <i className="fa fa-layer-group" /> Occasions
+            {occasions.length > 0 && (
+              <span className="et-tab-badge">{occasions.length}</span>
+            )}
+          </button>
+        )}
         {featureFlags.TABS.dashboard && (
           <button
             className={`et-tab${view === "dashboard" ? " et-tab--active" : ""}`}
@@ -316,6 +521,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             <i className="fa fa-chart-pie" /> Dashboard
           </button>
         )}
+        
       </div>
 
       {/* ── Body ── */}
@@ -344,6 +550,7 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             }}
             onCategoryChange={setActiveCategory}
             onDeleteRequest={setConfirmDelete}
+            onEditRequest={(expense) => openEditModal(expense, "daily")}
             onAddExpense={openAddModal}
           />
         )}
@@ -374,28 +581,81 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
           />
         )}
+
+        {view === "occasions" && !selectedOccasion && (
+          <OccasionsView
+            occasions={occasions}
+            loading={!occasionsLoaded}
+            onSelectOccasion={(occ) => {
+              setSelectedOccasion(occ);
+              setOccasionExpenses([]);
+            }}
+            onInfoOccasion={setInfoOccasion}
+            onNewOccasion={() => setShowAddOccasionModal(true)}
+          />
+        )}
+
+        {view === "occasions" && selectedOccasion && (
+          <OccasionDetailView
+            occasion={selectedOccasion}
+            expenses={occasionExpenses}
+            loading={occasionExpensesLoading}
+            deletingId={deletingId}
+            enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
+            onBack={() => setSelectedOccasion(null)}
+            onAddExpense={openAddModalForOccasion}
+            onEditRequest={(expense) => openEditModal(expense, "occasion-expense")}
+            onDeleteRequest={requestDeleteOccasionExpense}
+          />
+        )}
       </div>
 
       {/* ── Floating add button ── */}
-      <button className="et-fab" onClick={openAddModal} title="Add expense">
+      <button
+        className="et-fab"
+        onClick={() => {
+          if (view === "occasions") {
+            if (selectedOccasion) openAddModalForOccasion();
+            else setShowAddOccasionModal(true);
+          } else {
+            openAddModal();
+          }
+        }}
+        title={view === "occasions" ? (selectedOccasion ? "Add expense to occasion" : "New occasion") : "Add expense"}
+      >
         <i className="fa fa-plus" />
       </button>
 
       {/* ── Modals ── */}
       {showModal && (
         <AddExpenseModal
-          onClose={() => setShowModal(false)}
+          onClose={() => { setShowModal(false); setAddingToOccasion(false); setEditingExpense(null); }}
           form={form}
           setForm={setForm}
           formErrors={formErrors}
           setFormErrors={setFormErrors}
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
+          selectedDate={addingToOccasion ? occasionDate : selectedDate}
+          onDateChange={addingToOccasion ? setOccasionDate : setSelectedDate}
           onSubmit={handleAddExpense}
           savingExpense={savingExpense}
           enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
+          isEditing={!!editingExpense}
         />
       )}
+
+      {showAddOccasionModal && (
+        <AddOccasionModal
+          onClose={() => setShowAddOccasionModal(false)}
+          onSubmit={handleCreateOccasion}
+          saving={savingOccasion}
+        />
+      )}
+
+      <OccasionInfoModal
+        occasion={infoOccasion}
+        onClose={() => setInfoOccasion(null)}
+        onDelete={(occ) => { setInfoOccasion(null); requestDeleteOccasionCard(occ); }}
+      />
 
       <ConfirmDeleteModal
         expense={confirmDelete}

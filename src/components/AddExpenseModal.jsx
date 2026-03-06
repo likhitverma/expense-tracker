@@ -11,6 +11,7 @@ export default function AddExpenseModal({
   onSubmit,
   savingExpense,
   enableIncomeTracking,
+  isEditing,
 }) {
   const isIncome = form.type === "income";
   const cats = isIncome ? INCOME_CATEGORIES : CATEGORIES;
@@ -26,8 +27,8 @@ export default function AddExpenseModal({
       <div className="et-modal" onClick={(e) => e.stopPropagation()}>
         <div className="et-modal-header">
           <div className="et-modal-title-wrap">
-            <span>{isIncome ? "💰" : "➕"}</span>
-            <h2>{isIncome ? "Add Income" : "Add Expense"}</h2>
+            <span>{isIncome ? "💰" : isEditing ? "✏️" : "➕"}</span>
+            <h2>{isEditing ? (isIncome ? "Edit Income" : "Edit Expense") : (isIncome ? "Add Income" : "Add Expense")}</h2>
           </div>
           <button className="et-modal-close" onClick={onClose}>
             <i className="fa fa-xmark" />
@@ -173,7 +174,7 @@ export default function AddExpenseModal({
             ) : (
               <i className={`fa fa-${isIncome ? "arrow-trend-up" : "plus"}`} />
             )}
-            {savingExpense ? "Adding…" : isIncome ? "Add Income" : "Add Expense"}
+            {savingExpense ? (isEditing ? "Saving…" : "Adding…") : isEditing ? "Save Changes" : isIncome ? "Add Income" : "Add Expense"}
           </button>
         </div>
       </div>

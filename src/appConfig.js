@@ -8,6 +8,7 @@ const featureFlags = {
     daily: true,
     monthly: true,
     dashboard: true,
+    occasions: true,
   },
 };
 

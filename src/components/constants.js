@@ -34,6 +34,14 @@ export const INCOME_CATEGORIES = [
   { id: "other_income", label: "Other", icon: "💰", color: "#22c55e" },
 ];
 
+// ── Occasion Emojis ─────────────────────────────────────────────────────────
+export const OCCASION_EMOJIS = [
+  "✈️", "🚗", "🏠", "🎉", "🎓", "💒", "🏥", "🛠️",
+  "🎁", "🍽️", "🎮", "💼", "🏋️", "🐾", "📱", "🎭",
+  "🏖️", "🚢", "🏔️", "🎨", "📚", "🍕", "🎂", "⚽",
+  "🚀", "🛍️", "🎸", "🌿", "👔", "🎪",
+];
+
 // ── Theme ───────────────────────────────────────────────────────────────────
 export const THEME_ORDER = ["light", "dark", "golden", "monokai"];
 export const THEME_ICONS = {

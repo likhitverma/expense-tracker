@@ -1,0 +1,273 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   OCCASIONS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.et-occasions-view {
+  /* padding: 2px 4px; */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Header row (title + New button) ── */
+.et-occ-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 3px;
+  gap: 10px;
+}
+
+.et-occ-list-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  margin-top: 2px;
+}
+
+.et-occ-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.et-occ-new-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* ── Occasion cards list ── */
+.et-occ-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.et-occ-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 14px 14px 16px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.et-occ-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+.et-occ-card-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.et-occ-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.et-occ-card-name {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-occ-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-occ-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.et-occ-card-arrow {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ── Occasion detail view ── */
+.et-occ-detail {
+  /* padding: 12px 14px; */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.et-occ-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: var(--toolbar-btn-hover-bg);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.15s, color 0.15s;
+}
+.et-occ-back-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.et-occ-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+
+.et-occ-detail-emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.et-occ-detail-hero-text {
+  min-width: 0;
+}
+
+.et-occ-detail-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-occ-detail-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Emoji picker (AddOccasionModal) ── */
+.et-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.et-emoji-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  padding: 8px 4px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.12s, background 0.12s;
+  line-height: 1;
+}
+.et-emoji-btn:hover {
+  transform: scale(1.12);
+  border-color: var(--primary);
+  background: var(--toolbar-btn-hover-bg);
+}
+.et-emoji-btn--selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  transform: scale(1.08);
+}
+
+@media (min-width: 480px) {
+  .et-emoji-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+/* ── Info icon button on occasion cards ── */
+.et-occ-info-btn {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: rgba(99, 102, 241, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.et-occ-info-btn:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #6366f1;
+  transform: scale(1.08);
+}
+
+/* ── OccasionInfoModal body ── */
+.et-occ-info-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+.et-occ-info-emoji {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.et-occ-info-text {
+  min-width: 0;
+}
+.et-occ-info-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-word;
+}
+.et-occ-info-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  word-break: break-word;
+}
