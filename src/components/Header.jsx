@@ -22,16 +22,33 @@ export default function Header({ user, onLogout, theme, onCycleTheme, onDownload
       {/* ── User menu (left) ── */}
       <div className="et-user-menu" ref={menuRef}>
         <button
-          className={`et-icon-btn${showUserMenu ? " et-icon-btn--active" : ""}`}
+          className={`et-icon-btn et-icon-btn--avatar${showUserMenu ? " et-icon-btn--active" : ""}`}
           onClick={() => setShowUserMenu((v) => !v)}
           title="Account"
         >
-          <i className="fa fa-circle-user" />
+          {user?.photoURL ? (
+            <img
+              src={user.photoURL}
+              alt=""
+              className="et-user-avatar"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <i className="fa fa-circle-user" />
+          )}
         </button>
 
         {showUserMenu && (
           <div className="et-user-dropdown">
             <div className="et-user-dropdown-info">
+              {user?.photoURL && (
+                <img
+                  src={user.photoURL}
+                  alt=""
+                  className="et-user-avatar et-user-avatar--lg"
+                  referrerPolicy="no-referrer"
+                />
+              )}
               <div className="et-user-display-name">{user?.displayName}</div>
               <div className="et-user-email">{user?.email}</div>
             </div>

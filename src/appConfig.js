@@ -9,6 +9,7 @@ const featureFlags = {
     monthly: true,
     dashboard: true,
     occasions: true,
+    groups: true,
   },
 };
 

@@ -11,6 +11,14 @@ import {
   addOccasionExpense,
   updateOccasionExpense,
   deleteOccasionExpense,
+  loadGroups,
+  addGroup,
+  updateGroup,
+  deleteGroup,
+  loadGroupExpenses,
+  addGroupExpense,
+  updateGroupExpense,
+  deleteGroupExpense,
 } from "../Firebase/firestoreOps";
 import { uid } from "../utils/helpers";
 import featureFlags from "../appConfig";
@@ -21,8 +29,14 @@ import MonthlyView from "./MonthlyView";
 import Dashboard from "./Dashboard";
 import OccasionsView from "./OccasionsView";
 import OccasionDetailView from "./OccasionDetailView";
+import GroupsView from "./GroupsView";
+import GroupDetailView from "./GroupDetailView";
 import AddExpenseModal from "./AddExpenseModal";
 import AddOccasionModal from "./AddOccasionModal";
+import AddGroupModal from "./AddGroupModal";
+import AddGroupExpenseModal from "./AddGroupExpenseModal";
+import EditGroupModal from "./EditGroupModal";
+import ManageMembersModal from "./ManageMembersModal";
 import OccasionInfoModal from "./OccasionInfoModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import {
@@ -36,7 +50,8 @@ import {
   persistTheme,
 } from "./constants";
 import "./ExpenseTracker.css";
-import "../styles/occasionsView.css"
+import "../styles/occasionsView.css";
+import "../styles/groupsView.css";
 
 export default function ExpenseTracker({ user, onLogout, toast }) {
   // ── Theme ─────────────────────────────────────────────────────────────────
@@ -97,6 +112,21 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
 
   // ── Occasion info modal ───────────────────────────────────────────────────
   const [infoOccasion, setInfoOccasion] = useState(null);
+
+  // ── Groups ────────────────────────────────────────────────────────────────
+  const [groups, setGroups] = useState([]);
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [groupExpenses, setGroupExpenses] = useState([]);
+  const [groupExpensesLoading, setGroupExpensesLoading] = useState(false);
+  const [showAddGroupModal, setShowAddGroupModal] = useState(false);
+  const [savingGroup, setSavingGroup] = useState(false);
+  const [showAddGroupExpenseModal, setShowAddGroupExpenseModal] = useState(false);
+  const [savingGroupExpense, setSavingGroupExpense] = useState(false);
+  const [editingGroupExpense, setEditingGroupExpense] = useState(null);
+  const [showEditGroupModal, setShowEditGroupModal] = useState(false);
+  const [savingGroupUpdate, setSavingGroupUpdate] = useState(false);
+  const [showManageMembersModal, setShowManageMembersModal] = useState(false);
 
   // ── Fix: override body overflow so the page scrolls ──────────────────────
   useEffect(() => {
@@ -244,6 +274,37 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         setOccasionExpensesLoading(false);
       });
   }, [selectedOccasion?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Load groups (lazy, first time tab is opened) ──────────────────────────
+  useEffect(() => {
+    if (view !== "groups" || groupsLoaded) return;
+    loadGroups(user.uid)
+      .then((data) => {
+        setGroups(data);
+        setGroupsLoaded(true);
+      })
+      .catch((err) => {
+        console.error("Failed to load groups:", err);
+        toast?.("Failed to load groups.", "error");
+        setGroupsLoaded(true);
+      });
+  }, [view, groupsLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Load expenses for selected group ─────────────────────────────────────
+  useEffect(() => {
+    if (!selectedGroup) return;
+    setGroupExpensesLoading(true);
+    loadGroupExpenses(selectedGroup.id)
+      .then((data) => {
+        setGroupExpenses(data);
+        setGroupExpensesLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load group expenses:", err);
+        toast?.("Failed to load expenses.", "error");
+        setGroupExpensesLoading(false);
+      });
+  }, [selectedGroup?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   function cycleTheme() {
@@ -402,10 +463,30 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       return;
     }
 
-    // Deleting an expense (either daily or inside an occasion)
+    // Deleting an entire group card
+    if (deleteContext === "group-card") {
+      setDeleteContext("daily");
+      try {
+        await deleteGroup(item.id);
+        setGroups((prev) => prev.filter((g) => g.id !== item.id));
+        toast?.("Group deleted.", "success");
+      } catch (err) {
+        console.error("Delete group failed:", err);
+        toast?.("Failed to delete group.", "error");
+      }
+      return;
+    }
+
+    // Deleting an expense (daily, occasion, or group)
     setDeletingId(item.id);
     try {
-      if (deleteContext === "occasion-expense" && selectedOccasion) {
+      if (deleteContext === "group-expense" && selectedGroup) {
+        await deleteGroupExpense(selectedGroup.id, item.id);
+        setTimeout(() => {
+          setGroupExpenses((prev) => prev.filter((e) => e.id !== item.id));
+          setDeletingId(null);
+        }, 320);
+      } else if (deleteContext === "occasion-expense" && selectedOccasion) {
         await deleteOccasionExpense(user.uid, selectedOccasion.id, item.id);
         setTimeout(() => {
           setOccasionExpenses((prev) => prev.filter((e) => e.id !== item.id));
@@ -449,6 +530,95 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   function requestDeleteOccasionExpense(expense) {
     setDeleteContext("occasion-expense");
     setConfirmDelete(expense);
+  }
+
+  async function handleCreateGroup(groupData) {
+    setSavingGroup(true);
+    // groupData already includes id (generated in AddGroupModal)
+    try {
+      await addGroup(groupData);
+      setGroups((prev) => [groupData, ...prev]);
+      setShowAddGroupModal(false);
+      toast?.("Group created!", "success");
+    } catch (err) {
+      console.error("Failed to create group:", err);
+      toast?.("Failed to create group.", "error");
+    }
+    setSavingGroup(false);
+  }
+
+  async function handleEditGroup(updates) {
+    if (!selectedGroup) return;
+    setSavingGroupUpdate(true);
+    try {
+      await updateGroup(selectedGroup.id, updates);
+      const updated = { ...selectedGroup, ...updates };
+      setSelectedGroup(updated);
+      setGroups((prev) => prev.map((g) => (g.id === updated.id ? updated : g)));
+      setShowEditGroupModal(false);
+      toast?.("Group updated!", "success");
+    } catch (err) {
+      console.error("Failed to update group:", err);
+      toast?.("Failed to update group.", "error");
+    }
+    setSavingGroupUpdate(false);
+  }
+
+  async function handleManageMembers(updates) {
+    if (!selectedGroup) return;
+    setSavingGroupUpdate(true);
+    try {
+      await updateGroup(selectedGroup.id, updates);
+      const updated = { ...selectedGroup, ...updates };
+      setSelectedGroup(updated);
+      setGroups((prev) => prev.map((g) => (g.id === updated.id ? updated : g)));
+      setShowManageMembersModal(false);
+      toast?.("Members updated!", "success");
+    } catch (err) {
+      console.error("Failed to update members:", err);
+      toast?.("Failed to update members.", "error");
+    }
+    setSavingGroupUpdate(false);
+  }
+
+  async function handleAddGroupExpense(expenseData) {
+    if (!selectedGroup) return;
+    setSavingGroupExpense(true);
+    const record = { ...expenseData, addedBy: user.uid };
+    try {
+      if (editingGroupExpense) {
+        await updateGroupExpense(selectedGroup.id, record);
+        setGroupExpenses((prev) =>
+          prev.map((e) => (e.id === record.id ? record : e)),
+        );
+        setEditingGroupExpense(null);
+        toast?.("Changes saved!", "success");
+      } else {
+        await addGroupExpense(selectedGroup.id, record);
+        setGroupExpenses((prev) => [record, ...prev]);
+        toast?.("Expense added!", "success");
+      }
+      setShowAddGroupExpenseModal(false);
+    } catch (err) {
+      console.error("Failed to save group expense:", err);
+      toast?.("Failed to save. Please try again.", "error");
+    }
+    setSavingGroupExpense(false);
+  }
+
+  function requestDeleteGroupCard(grp) {
+    setDeleteContext("group-card");
+    setConfirmDelete(grp);
+  }
+
+  function requestDeleteGroupExpense(expense) {
+    setDeleteContext("group-expense");
+    setConfirmDelete(expense);
+  }
+
+  function openEditGroupExpense(expense) {
+    setEditingGroupExpense(expense);
+    setShowAddGroupExpenseModal(true);
   }
 
   function drillIntoDay(dateStr) {
@@ -513,6 +683,17 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             )}
           </button>
         )}
+        {featureFlags.TABS.groups && (
+          <button
+            className={`et-tab${view === "groups" ? " et-tab--active" : ""}`}
+            onClick={() => { setView("groups"); setSelectedGroup(null); }}
+          >
+            <i className="fa fa-users" /> Groups
+            {groups.length > 0 && (
+              <span className="et-tab-badge">{groups.length}</span>
+            )}
+          </button>
+        )}
         {featureFlags.TABS.dashboard && (
           <button
             className={`et-tab${view === "dashboard" ? " et-tab--active" : ""}`}
@@ -521,7 +702,6 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             <i className="fa fa-chart-pie" /> Dashboard
           </button>
         )}
-        
       </div>
 
       {/* ── Body ── */}
@@ -608,6 +788,35 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             onDeleteRequest={requestDeleteOccasionExpense}
           />
         )}
+
+        {view === "groups" && !selectedGroup && (
+          <GroupsView
+            groups={groups}
+            loading={!groupsLoaded}
+            onSelectGroup={(grp) => {
+              setSelectedGroup(grp);
+              setGroupExpenses([]);
+            }}
+            onDeleteGroup={requestDeleteGroupCard}
+            onNewGroup={() => setShowAddGroupModal(true)}
+          />
+        )}
+
+        {view === "groups" && selectedGroup && (
+          <GroupDetailView
+            group={selectedGroup}
+            expenses={groupExpenses}
+            loading={groupExpensesLoading}
+            deletingId={deletingId}
+            user={user}
+            onBack={() => setSelectedGroup(null)}
+            onAddExpense={() => { setEditingGroupExpense(null); setShowAddGroupExpenseModal(true); }}
+            onDeleteExpense={requestDeleteGroupExpense}
+            onEditExpense={openEditGroupExpense}
+            onEditGroup={() => setShowEditGroupModal(true)}
+            onManageMembers={() => setShowManageMembersModal(true)}
+          />
+        )}
       </div>
 
       {/* ── Floating add button ── */}
@@ -617,11 +826,20 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
           if (view === "occasions") {
             if (selectedOccasion) openAddModalForOccasion();
             else setShowAddOccasionModal(true);
+          } else if (view === "groups") {
+            if (selectedGroup) setShowAddGroupExpenseModal(true);
+            else setShowAddGroupModal(true);
           } else {
             openAddModal();
           }
         }}
-        title={view === "occasions" ? (selectedOccasion ? "Add expense to occasion" : "New occasion") : "Add expense"}
+        title={
+          view === "occasions"
+            ? selectedOccasion ? "Add expense to occasion" : "New occasion"
+            : view === "groups"
+            ? selectedGroup ? "Add group expense" : "New group"
+            : "Add expense"
+        }
       >
         <i className="fa fa-plus" />
       </button>
@@ -656,6 +874,44 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         onClose={() => setInfoOccasion(null)}
         onDelete={(occ) => { setInfoOccasion(null); requestDeleteOccasionCard(occ); }}
       />
+
+      {showAddGroupModal && (
+        <AddGroupModal
+          onClose={() => setShowAddGroupModal(false)}
+          onSubmit={handleCreateGroup}
+          saving={savingGroup}
+          currentUser={user}
+        />
+      )}
+
+      {showAddGroupExpenseModal && selectedGroup && (
+        <AddGroupExpenseModal
+          onClose={() => { setShowAddGroupExpenseModal(false); setEditingGroupExpense(null); }}
+          onSubmit={handleAddGroupExpense}
+          saving={savingGroupExpense}
+          members={selectedGroup.members}
+          editingExpense={editingGroupExpense}
+        />
+      )}
+
+      {showEditGroupModal && selectedGroup && (
+        <EditGroupModal
+          group={selectedGroup}
+          onClose={() => setShowEditGroupModal(false)}
+          onSubmit={handleEditGroup}
+          saving={savingGroupUpdate}
+        />
+      )}
+
+      {showManageMembersModal && selectedGroup && (
+        <ManageMembersModal
+          group={selectedGroup}
+          currentUser={user}
+          onClose={() => setShowManageMembersModal(false)}
+          onSave={handleManageMembers}
+          saving={savingGroupUpdate}
+        />
+      )}
 
       <ConfirmDeleteModal
         expense={confirmDelete}

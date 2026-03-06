@@ -123,6 +123,32 @@
 
 .et-user-dropdown-info {
   padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+/* ── User avatar ────────────────────────────────────────────────────────── */
+.et-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--et-border);
+}
+.et-user-avatar--lg {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 6px;
+  border-color: var(--et-accent);
+}
+.et-icon-btn--avatar {
+  padding: 2px;
+}
+.et-icon-btn--avatar .et-user-avatar {
+  border-color: transparent;
 }
 
 .et-user-display-name {
@@ -227,12 +253,33 @@
    ══════════════════════════════════════════════════════════════════════════ */
 .et-tab-strip {
   display: flex;
-  overflow-x: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 0 16px;
   gap: 4px;
   flex-shrink: 0;
+}
+
+/* width */
+.et-tab-strip::-webkit-scrollbar {
+  height: 0px;
+}
+
+/* Track */
+.et-tab-strip::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.et-tab-strip::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.et-tab-strip::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .et-tab {
@@ -362,7 +409,9 @@
   padding: 2px 4px;
   border-radius: 6px;
   line-height: 1;
-  transition: transform 0.15s, background 0.15s; 
+  transition:
+    transform 0.15s,
+    background 0.15s;
 }
 
 .et-calendar-btn:hover {
@@ -384,12 +433,12 @@
 }
 
 .et-date-label {
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   text-align: center;
   font-weight: 700;
 }
 
-.et-date-label-sm{ 
+.et-date-label-sm {
   font-size: 0.78rem;
   text-align: center;
   font-weight: 500;

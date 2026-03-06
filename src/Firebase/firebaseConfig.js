@@ -14,7 +14,7 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -40,17 +40,20 @@ setPersistence(auth, browserLocalPersistence).catch(() => {});
 export { onAuthStateChanged, getRedirectResult };
 
 
-// ── Firestore: save user profile on first sign-in ─────────────────────────────
+// ── Firestore: save user profile (always merge so photoURL/nameLower stay fresh)
 export const saveUserToFirestore = async (user) => {
   const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-  if (!snap.exists()) {
-    await setDoc(userRef, {
+  await setDoc(
+    userRef,
+    {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName || "Anonymous",
-    });
-  }
+      photoURL: user.photoURL || null,
+      nameLower: (user.displayName || "").toLowerCase(),
+    },
+    { merge: true },
+  );
 };
 
 // ── Firestore: write default settings for a new user ──────────────────────────
