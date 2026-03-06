@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   CATEGORIES,
   INCOME_CATEGORIES,
   formatDisplayDate,
   formatCurrency,
   formatTime,
-  shiftDate,
+  shiftDate, 
+  formatSimpleDate,
 } from "./constants";
 import ExpenseDetailModal from "./ExpenseDetailModal";
 
@@ -32,6 +33,7 @@ export default function DailyView({
   onAddExpense,
 }) {
   const [detailExpense, setDetailExpense] = useState(null);
+  const dateInputRef = useRef(null);
 
   const dayNet = dayEarned - daySpent;
 
@@ -60,17 +62,30 @@ export default function DailyView({
         </button>
         <div className="et-date-display">
           <input
+            ref={dateInputRef}
             type="date"
             value={selectedDate}
             onChange={(e) => {
               onDateChange(e.target.value);
               onCategoryChange("all");
             }}
-            className="et-date-input"
+            className="et-date-input-hidden"
           />
-          <span className="et-date-label">
-            {formatDisplayDate(selectedDate)}
-          </span>
+          <div className="et-date-label-row">
+            <span className="et-date-label">
+              {formatDisplayDate(selectedDate)}
+            </span>
+            <button
+              className="et-calendar-btn"
+              onClick={() => dateInputRef.current?.showPicker()}
+              title="Pick a date"
+            >
+              🗓️
+            </button>
+          </div>
+          <span className="et-date-label-sm">
+              {formatSimpleDate(selectedDate)}
+            </span>
           {selectedDate !== todayStr && (
             <button
               className="et-today-btn"
@@ -98,8 +113,10 @@ export default function DailyView({
               <div className="et-card-label">Spent Today</div>
               <div className="et-card-amount">{formatCurrency(daySpent)}</div>
               <div className="et-card-count">
-                {byDate.filter((e) => (e.type || "expense") === "expense")
-                  .length}{" "}
+                {
+                  byDate.filter((e) => (e.type || "expense") === "expense")
+                    .length
+                }{" "}
                 expense
                 {byDate.filter((e) => (e.type || "expense") === "expense")
                   .length !== 1
@@ -163,14 +180,18 @@ export default function DailyView({
             <div>
               <div className="et-card-label">This Month</div>
               <div className="et-card-amount">{formatCurrency(monthSpent)}</div>
-              <div className="et-card-count">{monthExpenseCount} transactions</div>
+              <div className="et-card-count">
+                {monthExpenseCount} transactions
+              </div>
             </div>
           </div>
           <div className="et-summary-card et-card-total">
             <span className="et-card-icon">💸</span>
             <div>
               <div className="et-card-label">All-Time</div>
-              <div className="et-card-amount">{formatCurrency(overallSpent)}</div>
+              <div className="et-card-amount">
+                {formatCurrency(overallSpent)}
+              </div>
               <div className="et-card-count">{totalExpenseCount} total</div>
             </div>
           </div>

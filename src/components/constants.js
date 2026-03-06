@@ -78,6 +78,11 @@ export function formatShortDate(dateStr) {
   });
 }
 
+export function formatSimpleDate(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return `${String(d.getDate()).padStart(2, "0")} / ${String(d.getMonth() + 1).padStart(2, "0")} / ${d.getFullYear()}`;
+}
+
 export function formatMonthLabel(monthStr) {
   return new Date(monthStr + "-01T00:00:00").toLocaleDateString("en-US", {
     month: "long",
