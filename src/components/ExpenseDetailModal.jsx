@@ -1,6 +1,12 @@
-import { CATEGORIES, INCOME_CATEGORIES, formatCurrency, formatTime, formatDisplayDate } from "./constants";
+import {
+  CATEGORIES,
+  INCOME_CATEGORIES,
+  formatCurrency,
+  formatTime,
+  formatDisplayDate,
+} from "./constants";
 
-export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
+export default function ExpenseDetailModal({ expense, onDelete, onClose, onEditRequest }) {
   if (!expense) return null;
 
   const isIncome = expense.type === "income";
@@ -29,7 +35,9 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
 
         {/* ── Type badge ── */}
         <div className="et-detail-type-row">
-          <span className={`et-detail-type-badge${isIncome ? " et-detail-type-badge--income" : " et-detail-type-badge--expense"}`}>
+          <span
+            className={`et-detail-type-badge${isIncome ? " et-detail-type-badge--income" : " et-detail-type-badge--expense"}`}
+          >
             <i className={`fa fa-arrow-trend-${isIncome ? "up" : "down"}`} />
             {isIncome ? "Income Received" : "Expense"}
           </span>
@@ -45,7 +53,8 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
             className="et-detail-amount"
             style={{ color: isIncome ? "#10b981" : cat.color }}
           >
-            {isIncome ? "+" : ""}{formatCurrency(expense.amount)}
+            {isIncome ? "+" : ""}
+            {formatCurrency(expense.amount)}
           </div>
           <div className="et-detail-cat-label">{cat.label}</div>
         </div>
@@ -70,7 +79,9 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
             </span>
             <div>
               <div className="et-detail-row-label">Date</div>
-              <div className="et-detail-row-value">{formatDisplayDate(expense.date)}</div>
+              <div className="et-detail-row-value">
+                {formatDisplayDate(expense.date)}
+              </div>
             </div>
           </div>
 
@@ -80,7 +91,9 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
             </span>
             <div>
               <div className="et-detail-row-label">Time</div>
-              <div className="et-detail-row-value">{formatTime(expense.time)}</div>
+              <div className="et-detail-row-value">
+                {formatTime(expense.time)}
+              </div>
             </div>
           </div>
         </div>
@@ -90,15 +103,15 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose }) {
           <button className="et-btn et-btn--cancel" onClick={onClose}>
             Close
           </button>
-          {/* <button
-            className="et-btn et-btn--danger"
+          <button
+            className="et-btn et-btn"
             onClick={() => {
               onClose();
-              onDelete(expense);
+              onEditRequest(expense)
             }}
           >
-            <i className="fa fa-trash" /> Delete
-          </button> */}
+            <i className="fa fa-edit" /> Edit
+          </button> 
         </div>
       </div>
     </div>

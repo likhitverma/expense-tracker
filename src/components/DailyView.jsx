@@ -30,7 +30,7 @@ export default function DailyView({
   onDateChange,
   onCategoryChange,
   onDeleteRequest,
-  onEditRequest,
+  onEditRequest, 
   onAddExpense,
 }) {
   const [detailExpense, setDetailExpense] = useState(null);
@@ -340,16 +340,6 @@ export default function DailyView({
                     {formatCurrency(expense.amount)}
                   </div>
                   <button
-                    className="et-edit-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEditRequest(expense);
-                    }}
-                    title="Edit"
-                  >
-                    <i className="fa fa-pen" />
-                  </button>
-                  <button
                     className="et-del-btn"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -371,6 +361,7 @@ export default function DailyView({
         expense={detailExpense}
         onClose={() => setDetailExpense(null)}
         onDelete={onDeleteRequest}
+        onEditRequest={onEditRequest}
       />
     </>
   );

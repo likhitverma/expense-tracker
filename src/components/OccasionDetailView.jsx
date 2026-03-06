@@ -288,16 +288,6 @@ export default function OccasionDetailView({
                       {formatCurrency(expense.amount)}
                     </div>
                     <button
-                      className="et-edit-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEditRequest(expense);
-                      }}
-                      title="Edit"
-                    >
-                      <i className="fa fa-pen" />
-                    </button>
-                    <button
                       className="et-del-btn"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -319,6 +309,7 @@ export default function OccasionDetailView({
         expense={detailExpense}
         onClose={() => setDetailExpense(null)}
         onDelete={onDeleteRequest}
+        onEditRequest={onEditRequest}
       />
     </>
   );
