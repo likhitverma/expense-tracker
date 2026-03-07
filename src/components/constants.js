@@ -1,20 +1,5 @@
 // ── Categories ─────────────────────────────────────────────────────────────
 export const CATEGORIES = [
-  // { id: "food", label: "Food", icon: "🍔", color: "#f59e0b" },
-  // { id: "fruits", label: "Fruits", icon: "🍎", color: "#ec4899" },
-  // { id: "transport", label: "Transport", icon: "🚌", color: "#3b82f6" },
-  // { id: "travel", label: "Travel", icon: "🚂", color: "#f63bf6" },
-  // { id: "fuel", label: "Fuel", icon: "⛽", color: "#8b5cf6" },
-  // { id: "shopping", label: "Shopping", icon: "🛍️", color: "#8b5cf6" },
-  // { id: "bills", label: "Bills", icon: "📋", color: "#ef4444" },
-  // { id: "Investment", label: "Investment", icon: "📈", color: "#22c55e" },
-  // { id: "health", label: "Health", icon: "🏋️‍♂️", color: "#10b981" },
-  // { id: "medicine", label: "Medicine", icon: "💊", color: "#04a818" },
-  // { id: "entertainment", label: "Entertainment", icon: "🎬", color: "#f43f5e" },
-  // { id: "temple", label: "Temple", icon: "🛕", color: "#0ea5e9" },
-  // { id: "other", label: "Other", icon: "💡", color: "#6b7280" },
-
-
   // 🍔 Food & Drinks
   { id: "food", label: "Food", icon: "🍔", color: "#f59e0b" },
   { id: "fruits", label: "Fruits", icon: "🍎", color: "#ec4899" },
@@ -77,49 +62,21 @@ export const CATEGORIES = [
 
   // 💡 Other
   { id: "other", label: "Other", icon: "💡", color: "#6b7280" },
-
 ];
 
 // ── Income Categories ───────────────────────────────────────────────────────
-// export const INCOME_CATEGORIES = [
-//   { id: "salary", label: "Salary", icon: "💼", color: "#10b981" },
-//   { id: "business", label: "Business", icon: "🏢", color: "#3b82f6" },
-//   { id: "rental", label: "Rental", icon: "🏠", color: "#8b5cf6" },
-//   { id: "investment", label: "Investment", icon: "📈", color: "#22c55e" },
-//   { id: "gift", label: "Gift", icon: "🎁", color: "#f59e0b" },
-//   { id: "refund", label: "Refund", icon: "🔄", color: "#8b5cf6" },
-//   { id: "boss", label: "Boss", icon: "👨‍🦳", color: "#3b82f6" },
-//   { id: "relative", label: "Relative", icon: "👪", color: "#10b981" },
-//   { id: "father", label: "Father", icon: "👨‍🍼", color: "#3b82f6" },
-//   { id: "mother", label: "Mother", icon: "🤱", color: "#ec4899" },
-//   { id: "sibling", label: "Sibling", icon: "👦👧", color: "#f59e0b" },
-//   { id: "friend", label: "Friend", icon: "👫", color: "#8b5cf6" },
-//   { id: "other_person", label: "Other Person", icon: "🧑", color: "#6b7280" },
-//   { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦", color: "#22c55e" },
-//   { id: "freelance", label: "Freelance", icon: "💻", color: "#06b6d4" },
-//   { id: "other_income", label: "Other", icon: "💰", color: "#22c55e" },
-// ];
 export const INCOME_CATEGORIES = [
   { id: "salary", label: "Salary", icon: "💼", color: "#10b981" },
   { id: "business", label: "Business", icon: "🏢", color: "#3b82f6" },
-  { id: "freelance", label: "Freelance", icon: "💻", color: "#06b6d4" },
-  { id: "side_hustle", label: "Side Hustle", icon: "🛠️", color: "#14b8a6" },
 
+  { id: "boss", label: "Boss", icon: "👨‍🦳", color: "#3b82f6" },
   { id: "rental", label: "Rental", icon: "🏠", color: "#8b5cf6" },
-  { id: "investment", label: "Investment", icon: "📈", color: "#22c55e" },
-  { id: "dividend", label: "Dividend", icon: "📊", color: "#16a34a" },
-  { id: "interest", label: "Interest", icon: "🏦", color: "#0ea5e9" },
-
-  { id: "bonus", label: "Bonus", icon: "🎉", color: "#f59e0b" },
-  { id: "commission", label: "Commission", icon: "💵", color: "#84cc16" },
 
   { id: "gift", label: "Gift", icon: "🎁", color: "#f59e0b" },
   { id: "refund", label: "Refund", icon: "🔄", color: "#8b5cf6" },
   { id: "cashback", label: "Cashback", icon: "💳", color: "#22c55e" },
-
-  { id: "sale", label: "Sale (Old Items)", icon: "📦", color: "#6366f1" },
-
-  { id: "boss", label: "Boss", icon: "👨‍🦳", color: "#3b82f6" },
+  { id: "side_hustle", label: "Side Hustle", icon: "🛠️", color: "#14b8a6" },
+  { id: "freelance", label: "Freelance", icon: "💻", color: "#06b6d4" },
   { id: "relative", label: "Relative", icon: "👪", color: "#10b981" },
   { id: "father", label: "Father", icon: "👨‍🍼", color: "#3b82f6" },
   { id: "mother", label: "Mother", icon: "🤱", color: "#ec4899" },
@@ -127,27 +84,92 @@ export const INCOME_CATEGORIES = [
   { id: "friend", label: "Friend", icon: "👫", color: "#8b5cf6" },
   { id: "family", label: "Family", icon: "👨‍👩‍👧‍👦", color: "#22c55e" },
   { id: "other_person", label: "Other Person", icon: "🧑", color: "#6b7280" },
+  { id: "investment", label: "Investment", icon: "📈", color: "#22c55e" },
+  { id: "dividend", label: "Dividend", icon: "📊", color: "#16a34a" },
+  { id: "interest", label: "Interest", icon: "🏦", color: "#0ea5e9" },
+
+  { id: "bonus", label: "Bonus", icon: "🎉", color: "#f59e0b" },
+  { id: "commission", label: "Commission", icon: "💵", color: "#84cc16" },
+
+  { id: "sale", label: "Sale (Old Items)", icon: "📦", color: "#6366f1" },
 
   { id: "scholarship", label: "Scholarship", icon: "🎓", color: "#14b8a6" },
-  { id: "government", label: "Government Benefit", icon: "🏛️", color: "#64748b" },
+  {
+    id: "government",
+    label: "Government Benefit",
+    icon: "🏛️",
+    color: "#64748b",
+  },
   { id: "pension", label: "Pension", icon: "👴", color: "#f97316" },
 
   { id: "other_income", label: "Other", icon: "💰", color: "#22c55e" },
 ];
 // ── Group Emojis ────────────────────────────────────────────────────────────
 export const GROUP_EMOJIS = [
-  "👥", "🏖️", "🎉", "✈️", "🏕️", "🍕", "🎂", "🎬",
-  "🏋️", "🚗", "🚢", "🏔️", "⚽", "🎮", "🎸", "🎭",
-  "🏠", "🍻", "🎓", "💼", "🛒", "🎁", "🌍", "🏨",
-  "🍽️", "🎪", "🧳", "🎯", "🏄", "🎊",
+  "👥",
+  "🏖️",
+  "🎉",
+  "✈️",
+  "🏕️",
+  "🍕",
+  "🎂",
+  "🎬",
+  "🏋️",
+  "🚗",
+  "🚢",
+  "🏔️",
+  "⚽",
+  "🎮",
+  "🎸",
+  "🎭",
+  "🏠",
+  "🍻",
+  "🎓",
+  "💼",
+  "🛒",
+  "🎁",
+  "🌍",
+  "🏨",
+  "🍽️",
+  "🎪",
+  "🧳",
+  "🎯",
+  "🏄",
+  "🎊",
 ];
 
 // ── Occasion Emojis ─────────────────────────────────────────────────────────
 export const OCCASION_EMOJIS = [
-  "✈️", "🚗", "🏠", "🎉", "🎓", "💒", "🏥", "🛠️",
-  "🎁", "🍽️", "🎮", "💼", "🏋️", "🐾", "📱", "🎭",
-  "🏖️", "🚢", "🏔️", "🎨", "📚", "🍕", "🎂", "⚽",
-  "🚀", "🛍️", "🎸", "🌿", "👔", "🎪",
+  "✈️",
+  "🚗",
+  "🏠",
+  "🎉",
+  "🎓",
+  "💒",
+  "🏥",
+  "🛠️",
+  "🎁",
+  "🍽️",
+  "🎮",
+  "💼",
+  "🏋️",
+  "🐾",
+  "📱",
+  "🎭",
+  "🏖️",
+  "🚢",
+  "🏔️",
+  "🎨",
+  "📚",
+  "🍕",
+  "🎂",
+  "⚽",
+  "🚀",
+  "🛍️",
+  "🎸",
+  "🌿",
+  "👔",
+  "🎪",
 ];
 
 // ── Theme ───────────────────────────────────────────────────────────────────

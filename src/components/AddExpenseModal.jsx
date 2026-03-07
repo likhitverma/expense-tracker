@@ -95,34 +95,34 @@ export default function AddExpenseModal({
             )}
           </div>
 
-          {/* Category */}
-          {/* <div className="et-form-group">
-            <label>Category</label>
-            <div className="et-cat-selector">
-              {cats.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
-                  style={{ "--cat-color": cat.color }}
-                  onClick={() => setForm((f) => ({ ...f, category: cat.id }))}
-                >
-                  <span className="et-cat-btn-icon">{cat.icon}</span>
-                  <span className="et-cat-btn-label">{cat.label}</span>
-                </button>
-              ))}
-            </div>
-          </div> */}
-
-          {/* Category */}
-          <Categories
-            categories={cats}
-            form={form}
-            setForm={setForm}
-            setShowAllCategories={setShowAllCategories}
-            VISIBLE_CATS={VISIBLE_CATS}
-            showAllCategories={showAllCategories}
-          />
+          {/* Description */}
+          <div className="et-form-group">
+            <label htmlFor="et-desc">
+              Description <span className="et-label-opt">(optional)</span>
+            </label>
+            <input
+              id="et-desc"
+              type="text"
+              value={form.description}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
+              placeholder={
+                isIncome ? "e.g. Monthly salary" : "e.g. Coffee at Starbucks"
+              }
+              maxLength={100}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") onSubmit();
+              }}
+              className={`et-input et-desc-input${formErrors.description ? " et-input--error" : ""}`}
+            />
+          </div>
+          {formErrors.description && (
+            <span className="et-field-error">
+              <i className="fa fa-circle-exclamation" />{" "}
+              {formErrors.description}
+            </span>
+          )}
 
           {/* Time + Date */}
           <div className="et-form-row">
@@ -155,34 +155,34 @@ export default function AddExpenseModal({
             </div>
           </div>
 
-          {/* Description */}
-          <div className="et-form-group">
-            <label htmlFor="et-desc">
-              Description <span className="et-label-opt">(optional)</span>
-            </label>
-            <input
-              id="et-desc"
-              type="text"
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              placeholder={
-                isIncome ? "e.g. Monthly salary" : "e.g. Coffee at Starbucks"
-              }
-              maxLength={100}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") onSubmit();
-              }}
-              className={`et-input et-desc-input${formErrors.description ? " et-input--error" : ""}`}
-            />
-          </div>
-          {formErrors.description && (
-            <span className="et-field-error">
-              <i className="fa fa-circle-exclamation" />{" "}
-              {formErrors.description}
-            </span>
-          )}
+          {/* Category */}
+          {/* <div className="et-form-group">
+            <label>Category</label>
+            <div className="et-cat-selector">
+              {cats.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
+                  style={{ "--cat-color": cat.color }}
+                  onClick={() => setForm((f) => ({ ...f, category: cat.id }))}
+                >
+                  <span className="et-cat-btn-icon">{cat.icon}</span>
+                  <span className="et-cat-btn-label">{cat.label}</span>
+                </button>
+              ))}
+            </div>
+          </div> */}
+
+          {/* Category */}
+          <Categories
+            categories={cats}
+            form={form}
+            setForm={setForm}
+            setShowAllCategories={setShowAllCategories}
+            VISIBLE_CATS={VISIBLE_CATS}
+            showAllCategories={showAllCategories}
+          />
         </div>
 
         <div className="et-modal-footer">

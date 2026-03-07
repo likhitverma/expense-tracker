@@ -280,6 +280,33 @@ export default function AddGroupExpenseModal({
             )}
           </div>
 
+          {/* Date + Time */}
+          <div className="et-form-row">
+            <div className="et-form-group">
+              <label htmlFor="et-ge-time">Time</label>
+              <input
+                id="et-ge-time"
+                type="time"
+                value={form.time}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, time: e.target.value }))
+                }
+                className="et-input"
+              />
+            </div>
+            <div className="et-form-group">
+              <label>Date</label>
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, date: e.target.value }))
+                }
+                className="et-input"
+              />
+            </div>
+          </div>
+
           {/* Category */}
           <Categories
             categories={CATEGORIES}
@@ -326,33 +353,6 @@ export default function AddGroupExpenseModal({
               </button>
             )}
           </div> */}
-
-          {/* Date + Time */}
-          <div className="et-form-row">
-            <div className="et-form-group">
-              <label htmlFor="et-ge-time">Time</label>
-              <input
-                id="et-ge-time"
-                type="time"
-                value={form.time}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, time: e.target.value }))
-                }
-                className="et-input"
-              />
-            </div>
-            <div className="et-form-group">
-              <label>Date</label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, date: e.target.value }))
-                }
-                className="et-input"
-              />
-            </div>
-          </div>
         </div>
 
         <div className="et-modal-footer">

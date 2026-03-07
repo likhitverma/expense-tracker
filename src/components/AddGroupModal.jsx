@@ -96,22 +96,7 @@ export default function AddGroupModal({ onClose, onSubmit, saving, currentUser }
         </div>
 
         <div className="et-modal-body">
-          {/* Emoji picker */}
-          <div className="et-form-group">
-            <label>Icon</label>
-            <div className="et-emoji-grid">
-              {GROUP_EMOJIS.map((emoji) => (
-                <button
-                  key={emoji}
-                  type="button"
-                  className={`et-emoji-btn${form.emoji === emoji ? " et-emoji-btn--selected" : ""}`}
-                  onClick={() => setForm((f) => ({ ...f, emoji }))}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </div>
+
 
           {/* Name */}
           <div className="et-form-group">
@@ -249,6 +234,23 @@ export default function AddGroupModal({ onClose, onSubmit, saving, currentUser }
                 <i className="fa fa-circle-exclamation" /> {errors.members}
               </span>
             )}
+          </div>
+
+          {/* Emoji picker */}
+          <div className="et-form-group">
+            <label>Icon</label>
+            <div className="et-emoji-grid">
+              {GROUP_EMOJIS.map((emoji) => (
+                <button
+                  key={emoji}
+                  type="button"
+                  className={`et-emoji-btn${form.emoji === emoji ? " et-emoji-btn--selected" : ""}`}
+                  onClick={() => setForm((f) => ({ ...f, emoji }))}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
