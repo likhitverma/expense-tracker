@@ -23,7 +23,6 @@ export const CATEGORIES = [
   { id: "snacks", label: "Snacks", icon: "🍟", color: "#f59e0b" },
   { id: "maggie", label: "Maggie", icon: "🍜", color: "#f59e0b" },
   { id: "groceries", label: "Groceries", icon: "🛒", color: "#22c55e" },
-  { id: "grocery", label: "Grocery", icon: "🛒", color: "#22c55e" },
 
   // 🏠 Home & Living
   { id: "rent", label: "Rent", icon: "🏠", color: "#6366f1" },
@@ -46,7 +45,6 @@ export const CATEGORIES = [
 
   // 🛍️ Shopping
   { id: "shopping", label: "Shopping", icon: "🛍️", color: "#8b5cf6" },
-  { id: "clothing", label: "Clothing", icon: "👕", color: "#fb7185" },
   { id: "clothes", label: "Clothes", icon: "👕", color: "#ec4899" },
   { id: "mart", label: "Mart", icon: "🏬", color: "#14b8a6" },
   { id: "smart_point", label: "Smart Point", icon: "🏪", color: "#6366f1" },

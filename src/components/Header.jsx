@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { THEME_ICONS, THEME_LABELS } from "./constants";
 
-export default function Header({ user, onLogout, theme, onCycleTheme, onDownload }) {
+export default function Header({
+  user,
+  onLogout,
+  theme,
+  onCycleTheme,
+  onDownload,
+}) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const menuRef = useRef(null);
 
@@ -26,31 +32,35 @@ export default function Header({ user, onLogout, theme, onCycleTheme, onDownload
           onClick={() => setShowUserMenu((v) => !v)}
           title="Account"
         >
-          {user?.photoURL ? (
+          {showUserMenu ? (
+            <i className="fa fa-bars" />
+          ) : (
             <img
-              src={user.photoURL}
+              src="./images/logo.png"
               alt=""
               className="et-user-avatar"
               referrerPolicy="no-referrer"
             />
-          ) : (
-            <i className="fa fa-circle-user" />
           )}
         </button>
 
         {showUserMenu && (
           <div className="et-user-dropdown">
             <div className="et-user-dropdown-info">
-              {user?.photoURL && (
-                <img
-                  src={user.photoURL}
-                  alt=""
-                  className="et-user-avatar et-user-avatar--lg"
-                  referrerPolicy="no-referrer"
-                />
-              )}
-              <div className="et-user-display-name">{user?.displayName}</div>
-              <div className="et-user-email">{user?.email}</div>
+              <div>
+                {user?.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="et-user-avatar et-user-avatar--lg"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
+              </div>
+              <div style={{ marginLeft: "10px" }}>
+                <div className="et-user-display-name">{user?.displayName}</div>
+                <div className="et-user-email">{user?.email}</div>
+              </div>
             </div>
             <div className="et-user-divider" />
             <button
@@ -69,7 +79,9 @@ export default function Header({ user, onLogout, theme, onCycleTheme, onDownload
 
       {/* ── App title ── */}
       <div className="et-header-title">
-        <span className="et-header-emoji">💰</span>
+        {/* <span className="et-header-emoji">
+          
+        </span> */}
         <div>
           <h1>Expense Tracker</h1>
           <span className="et-header-sub">{user?.displayName}</span>

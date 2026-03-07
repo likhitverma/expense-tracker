@@ -6,6 +6,7 @@ import {
   getCurrentTimeStr,
 } from "./constants";
 import { uid } from "../utils/helpers";
+import Categories from "./Categories";
 
 export default function AddGroupExpenseModal({
   onClose,
@@ -34,6 +35,8 @@ export default function AddGroupExpenseModal({
   });
   const [errors, setErrors] = useState({});
   const [isAllSplitMembersSelected, setAllSplitMemberSelected] = useState(true);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const VISIBLE_CATS = 8;
   function toggleSplit(uid) {
     setForm((f) => {
       const has = f.splitAmong.includes(uid);
@@ -250,7 +253,6 @@ export default function AddGroupExpenseModal({
                 <i className="fa fa-circle-exclamation" /> {errors.amount}
               </span>
             )}
- 
           </div>
 
           {/* Description */}
@@ -279,23 +281,51 @@ export default function AddGroupExpenseModal({
           </div>
 
           {/* Category */}
-          <div className="et-form-group">
-            <label>Category</label>
-            <div className="et-cat-selector"> 
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
-                    style={{ "--cat-color": cat.color }}
-                    onClick={() => setForm((f) => ({ ...f, category: cat.id }))}
-                  >
-                    <span className="et-cat-btn-icon">{cat.icon}</span>
-                    <span className="et-cat-btn-label">{cat.label}</span>
-                  </button>
-                ))} 
+          <Categories
+            categories={CATEGORIES}
+            form={form}
+            setForm={setForm}
+            setShowAllCategories={setShowAllCategories}
+            VISIBLE_CATS={VISIBLE_CATS}
+            showAllCategories={showAllCategories}
+          />
+          {/* <div className="et-form-group">
+            <label>
+              Category{" "}
+              <span className="et-cat-selected-badge">{form.category}</span>
+            </label>
+            <div className="et-cat-selector">
+              {(showAllCategories
+                ? CATEGORIES
+                : CATEGORIES.slice(0, VISIBLE_CATS)
+              ).map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
+                  style={{ "--cat-color": cat.color }}
+                  onClick={() => {
+                    setForm((f) => ({ ...f, category: cat.id }));
+                    setShowAllCategories(false);
+                  }}
+                >
+                  <span className="et-cat-btn-icon">{cat.icon}</span>
+                  <span className="et-cat-btn-label">{cat.label}</span>
+                </button>
+              ))}
             </div>
-          </div>
+            {CATEGORIES.length > VISIBLE_CATS && (
+              <button
+                type="button"
+                className="et-cat-show-more"
+                onClick={() => setShowAllCategories((v) => !v)}
+              >
+                {showAllCategories
+                  ? "Show less ↑"
+                  : `Show more (${CATEGORIES.length - VISIBLE_CATS} more) ↓`}
+              </button>
+            )}
+          </div> */}
 
           {/* Date + Time */}
           <div className="et-form-row">

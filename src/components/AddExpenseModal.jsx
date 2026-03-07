@@ -1,3 +1,5 @@
+import { useState } from "react";
+import Categories from "./Categories";
 import { CATEGORIES, INCOME_CATEGORIES, CURRENCY } from "./constants";
 
 export default function AddExpenseModal({
@@ -15,6 +17,8 @@ export default function AddExpenseModal({
 }) {
   const isIncome = form.type === "income";
   const cats = isIncome ? INCOME_CATEGORIES : CATEGORIES;
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const VISIBLE_CATS = 8;
 
   function switchType(newType) {
     const defaultCat = newType === "income" ? INCOME_CATEGORIES[0].id : "food";
@@ -28,7 +32,15 @@ export default function AddExpenseModal({
         <div className="et-modal-header">
           <div className="et-modal-title-wrap">
             <span>{isIncome ? "💰" : isEditing ? "✏️" : "➕"}</span>
-            <h2>{isEditing ? (isIncome ? "Edit Income" : "Edit Expense") : (isIncome ? "Add Income" : "Add Expense")}</h2>
+            <h2>
+              {isEditing
+                ? isIncome
+                  ? "Edit Income"
+                  : "Edit Expense"
+                : isIncome
+                  ? "Add Income"
+                  : "Add Expense"}
+            </h2>
           </div>
           <button className="et-modal-close" onClick={onClose}>
             <i className="fa fa-xmark" />
@@ -84,7 +96,7 @@ export default function AddExpenseModal({
           </div>
 
           {/* Category */}
-          <div className="et-form-group">
+          {/* <div className="et-form-group">
             <label>Category</label>
             <div className="et-cat-selector">
               {cats.map((cat) => (
@@ -100,7 +112,17 @@ export default function AddExpenseModal({
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
+
+          {/* Category */}
+          <Categories
+            categories={cats}
+            form={form}
+            setForm={setForm}
+            setShowAllCategories={setShowAllCategories}
+            VISIBLE_CATS={VISIBLE_CATS}
+            showAllCategories={showAllCategories}
+          />
 
           {/* Time + Date */}
           <div className="et-form-row">
@@ -145,7 +167,9 @@ export default function AddExpenseModal({
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              placeholder={isIncome ? "e.g. Monthly salary" : "e.g. Coffee at Starbucks"}
+              placeholder={
+                isIncome ? "e.g. Monthly salary" : "e.g. Coffee at Starbucks"
+              }
               maxLength={100}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onSubmit();
@@ -155,7 +179,8 @@ export default function AddExpenseModal({
           </div>
           {formErrors.description && (
             <span className="et-field-error">
-              <i className="fa fa-circle-exclamation" /> {formErrors.description}
+              <i className="fa fa-circle-exclamation" />{" "}
+              {formErrors.description}
             </span>
           )}
         </div>
@@ -174,7 +199,15 @@ export default function AddExpenseModal({
             ) : (
               <i className={`fa fa-${isIncome ? "arrow-trend-up" : "plus"}`} />
             )}
-            {savingExpense ? (isEditing ? "Saving…" : "Adding…") : isEditing ? "Save Changes" : isIncome ? "Add Income" : "Add Expense"}
+            {savingExpense
+              ? isEditing
+                ? "Saving…"
+                : "Adding…"
+              : isEditing
+                ? "Save Changes"
+                : isIncome
+                  ? "Add Income"
+                  : "Add Expense"}
           </button>
         </div>
       </div>
