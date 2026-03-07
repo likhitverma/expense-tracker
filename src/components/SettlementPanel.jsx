@@ -1,3 +1,4 @@
+import { capitalizeEachWord } from "../utils/helpers";
 import { formatCurrency } from "./constants";
 
 export default function SettlementPanel({ settlements, members, selfUID }) {
@@ -14,7 +15,7 @@ export default function SettlementPanel({ settlements, members, selfUID }) {
   function memberName(uid) {
     const m = members.find((x) => x.uid === uid);
     if (!m) return "Unknown";
-    return m.uid === selfUID ? "You" : m.name;
+    return m.uid === selfUID ? "You" : capitalizeEachWord(m.name);
   }
 
   function isSelfInvolved(t) {

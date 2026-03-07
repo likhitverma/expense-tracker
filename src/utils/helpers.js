@@ -39,3 +39,13 @@ export function charCount(html) {
 export function sanitizeFileName(str) {
   return (str || "note").replace(/[^a-z0-9_\-]/gi, "_").slice(0, 40);
 }
+
+export function capitalizeEachWord(str) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(function (word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}

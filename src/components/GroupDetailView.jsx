@@ -6,6 +6,9 @@ import {
 } from "./constants";
 import SettlementPanel from "./SettlementPanel";
 import { computeBalances, settleDebts } from "../utils/groupSettlement";
+import ExpenseDetailModal from "./ExpenseDetailModal";
+import { useState } from "react";
+import { capitalizeEachWord } from "../utils/helpers";
 
 export default function GroupDetailView({
   group,
@@ -19,7 +22,7 @@ export default function GroupDetailView({
   onEditExpense,
   onEditGroup,
   onManageMembers,
-  loadExpensesForSelectedGroup
+  loadExpensesForSelectedGroup,
 }) {
   const { members } = group;
   const isAdmin = group.adminUID === user.uid;
@@ -31,8 +34,7 @@ export default function GroupDetailView({
   const selfBalance = selfMember ? (balances[selfMember.uid] ?? 0) : 0;
   const totalSpent = expenses.reduce((s, e) => s + (e.amount || 0), 0);
 
-  console.log("Expenses-->", expenses);
-  console.log("members-->", members);
+  const [detailExpense, setDetailExpense] = useState(null);
   function getCat(expense) {
     return (
       CATEGORIES.find((c) => c.id === expense.category) ||
@@ -43,7 +45,7 @@ export default function GroupDetailView({
   function memberName(uid) {
     const m = members.find((x) => x.uid === uid);
     if (!m) return "Unknown";
-    return m.uid === user.uid ? "You" : m.name;
+    return m.uid === user.uid ? "You" : capitalizeEachWord(m.name);
   }
 
   function splitLabel(splitAmong) {
@@ -69,13 +71,16 @@ export default function GroupDetailView({
   return (
     <div className="et-grp-detail">
       <div className="et-grp-nav-buttons">
-        {/* Back */} 
+        {/* Back */}
         <button className="et-occ-back-btn" onClick={onBack}>
           <i className="fa fa-arrow-left" /> All Groups
         </button>
 
         {/* Referesh Data */}
-        <button className="et-occ-back-btn grp-ref-btn" onClick={loadExpensesForSelectedGroup}>
+        <button
+          className="et-occ-back-btn grp-ref-btn"
+          onClick={loadExpensesForSelectedGroup}
+        >
           <i className="fa fa-refresh" /> Referesh
         </button>
       </div>
@@ -189,7 +194,7 @@ export default function GroupDetailView({
                   )}
                 </div>
                 <div className="et-grp-avatar-name">
-                  {isSelf ? "You" : m.name.split(" ")[0]}
+                  {isSelf ? "You" : capitalizeEachWord(m.name.split(" ")[0])}
                 </div>
                 <div
                   className={`et-grp-avatar-bal${bal > 0.005 ? " pos" : bal < -0.005 ? " neg" : ""}`}
@@ -251,6 +256,7 @@ export default function GroupDetailView({
                     key={expense.id}
                     className={`et-grp-expense-card${deletingId === expense.id ? " et-deleting" : ""}`}
                     style={{ "--cat-color": cat.color }}
+                    onClick={() => setDetailExpense(expense)}
                   >
                     <div className="et-exp-cat-icon">{cat.icon}</div>
                     <div className="et-exp-info">
@@ -314,6 +320,17 @@ export default function GroupDetailView({
           </div>
         )}
       </div>
+      {/* ── Expense detail modal ── */}
+      <ExpenseDetailModal
+        isGroupExpense
+        members={members} 
+        user={user}
+        canEdit={detailExpense?.addedBy === user.uid}
+        expense={detailExpense}
+        onClose={() => setDetailExpense(null)}
+        onDelete={() => onDeleteExpense(detailExpense)}
+        onEditRequest={() => onEditExpense(detailExpense)}
+      />
     </div>
   );
 }
