@@ -1,0 +1,758 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   GROUP EXPENSES — Styles
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Groups list view ── */
+.et-groups-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.et-grp-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3px;
+  gap: 10px;
+}
+
+.et-grp-list-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.et-grp-new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+}
+.et-grp-new-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* ── Group card (list) ── */
+.et-grp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.et-grp-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 14px 14px 16px;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
+}
+.et-grp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--primary);
+}
+
+.et-grp-card-emoji {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.et-grp-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.et-grp-card-name {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-grp-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-grp-card-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.et-grp-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.et-grp-card-arrow {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ── Group detail view ── */
+.et-grp-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.et-grp-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.grp-ref-btn {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.et-grp-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+
+.et-grp-detail-emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.et-grp-detail-hero-text {
+  min-width: 0;
+}
+
+.et-grp-detail-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.et-grp-detail-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Members balance bar ── */
+.et-grp-members-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.et-grp-members-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.et-grp-member-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.et-grp-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 52px;
+}
+
+.et-grp-avatar-wrap--self .et-grp-avatar {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.et-grp-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+.et-grp-avatar--positive {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+.et-grp-avatar--negative {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.et-grp-avatar-name {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  max-width: 52px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.et-grp-avatar-bal {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+.et-grp-avatar-bal.pos {
+  color: #10b981;
+}
+.et-grp-avatar-bal.neg {
+  color: #ef4444;
+}
+
+/* ── Group expense card ── */
+.et-grp-expense-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px 12px 14px;
+  border-left: 4px solid var(--cat-color, var(--border));
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+}
+.et-grp-expense-card.et-deleting {
+  opacity: 0.4;
+  transform: scale(0.97);
+}
+
+.et-grp-expense-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.et-grp-split-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.et-grp-paidby {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.et-grp-split-dot {
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--text);
+}
+
+.et-grp-split-info {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.et-grp-your-share {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.et-grp-your-share strong {
+  color: var(--primary);
+}
+
+.et-grp-paid-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.et-grp-exp-debt-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: 3px;
+}
+
+.flex-row-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+/* ── Settlement panel ── */
+.et-settlement-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.et-settle-subtitle {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: -6px 0 2px;
+}
+
+.et-settle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.et-settle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.84rem;
+}
+.et-settle-row--you {
+  /* border-color: var(--success);  */
+  border: 2px solid var(--success);
+  /* background: color-mix(in srgb, var(--primary) 6%, transparent); */
+  background: color-mix(in srgb, var(--success) 30%, transparent);;
+}
+
+.et-settle-from,
+.et-settle-to {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+.et-settle-to {
+  justify-content: flex-end;
+}
+
+.et-settle-avatar {
+  font-size: 1rem;
+}
+
+.et-settle-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.et-settle-mid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.et-settle-arrow {
+  font-size: 0.8rem;
+}
+
+.et-settle-amount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.et-settle-all-good {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.et-settle-good-icon {
+  font-size: 2rem;
+}
+.et-settle-good-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+.et-settle-good-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── AddGroupModal — member management ── */
+.et-grp-members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.et-grp-member-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.et-grp-member-avatar {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.et-grp-member-name {
+  flex: 1;
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.et-grp-self-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+.et-grp-member-remove {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.et-grp-member-remove:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.et-grp-add-member-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.et-grp-add-member-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.et-grp-add-member-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── AddGroupExpenseModal — paidBy / split buttons ── */
+.et-grp-member-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.et-grp-member-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.et-grp-member-btn:hover {
+  border-color: var(--primary);
+  color: var(--text);
+}
+.et-grp-member-btn--selected {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.et-split-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.et-split-all-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.et-split-all-btn:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.et-split-info {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.et-split-info strong {
+  color: var(--primary);
+}
+
+/* ── Tall modal body scroll ── */
+.et-modal--tall .et-modal-body {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+/* ── Member row info (name + email stacked) ── */
+.et-grp-member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.et-grp-member-email {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Admin badge ── */
+.et-grp-admin-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: color-mix(in srgb, #f59e0b 18%, transparent);
+  color: #f59e0b;
+  border: 1px solid color-mix(in srgb, #f59e0b 35%, transparent);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* ── Admin action buttons in hero ── */
+.et-grp-admin-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── User search in AddGroupModal / ManageMembersModal ── */
+.et-grp-search-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.et-grp-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.et-grp-search-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: et-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+.et-grp-search-results {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.et-grp-search-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+.et-grp-search-result:last-child {
+  border-bottom: none;
+}
+.et-grp-search-result:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.et-grp-result-avatar {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.et-grp-result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.et-grp-result-name {
+  font-size: 0.87rem;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.et-grp-result-email {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.et-grp-result-add {
+  font-size: 0.75rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.et-grp-search-empty {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 8px 4px;
+  text-align: center;
+}
+
+/* ── Per-expense edit+delete actions ── */
+.et-exp-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}

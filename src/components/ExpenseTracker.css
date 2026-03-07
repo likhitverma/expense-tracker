@@ -122,11 +122,38 @@
 }
 
 .et-user-dropdown-info {
-  padding: 14px 16px 12px;
+  padding: 14px 16px 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+/* ── User avatar ────────────────────────────────────────────────────────── */
+.et-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--et-border);
+}
+.et-user-avatar--lg {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 6px;
+  border-color: var(--et-accent);
+}
+.et-icon-btn--avatar {
+  padding: 2px;
+}
+.et-icon-btn--avatar .et-user-avatar {
+  border-color: transparent;
 }
 
 .et-user-display-name {
-  font-size: 0.9rem;
+  font-size: 0
+  .9rem;
   font-weight: 800;
   color: var(--text);
   margin-bottom: 3px;
@@ -227,12 +254,33 @@
    ══════════════════════════════════════════════════════════════════════════ */
 .et-tab-strip {
   display: flex;
-  overflow-x: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 0 16px;
   gap: 4px;
   flex-shrink: 0;
+}
+
+/* width */
+.et-tab-strip::-webkit-scrollbar {
+  height: 0px;
+}
+
+/* Track */
+.et-tab-strip::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.et-tab-strip::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.et-tab-strip::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .et-tab {
@@ -362,7 +410,9 @@
   padding: 2px 4px;
   border-radius: 6px;
   line-height: 1;
-  transition: transform 0.15s, background 0.15s; 
+  transition:
+    transform 0.15s,
+    background 0.15s;
 }
 
 .et-calendar-btn:hover {
@@ -384,12 +434,12 @@
 }
 
 .et-date-label {
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   text-align: center;
   font-weight: 700;
 }
 
-.et-date-label-sm{ 
+.et-date-label-sm {
   font-size: 0.78rem;
   text-align: center;
   font-weight: 500;
@@ -780,7 +830,7 @@
   font-size: 13px;
   transition: all 0.15s;
   flex-shrink: 0;
-  opacity: 0;
+  opacity: 1;
 }
 
 .et-expense-card .et-del-btn {
@@ -1398,6 +1448,18 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 7px;
+  margin-top: 10px;
+}
+
+.et-cat-selected-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  padding: 2px 8px;
+  white-space: nowrap;
 }
 
 .et-cat-btn {
@@ -1441,6 +1503,27 @@
 }
 .et-cat-btn--selected .et-cat-btn-label {
   color: #fff !important;
+}
+
+/* Category show more toggle */
+.et-cat-show-more {
+  margin-top: 6px;
+  width: 100%;
+  padding: 6px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.et-cat-show-more:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
 }
 
 /* Modal footer */

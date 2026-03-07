@@ -1,3 +1,4 @@
+import { capitalizeEachWord } from "../utils/helpers";
 import {
   CATEGORIES,
   INCOME_CATEGORIES,
@@ -6,14 +7,48 @@ import {
   formatDisplayDate,
 } from "./constants";
 
-export default function ExpenseDetailModal({ expense, onDelete, onClose, onEditRequest }) {
+export default function ExpenseDetailModal({
+  isGroupExpense,
+  members,
+  expense,
+  user,
+  onDelete,
+  onClose,
+  onEditRequest,
+  canEdit,
+}) {
   if (!expense) return null;
 
+  const showEditButton = !isGroupExpense
+    ? true
+    : isGroupExpense && canEdit
+      ? true
+      : false;
+
+  console.log("expense==>", expense);
   const isIncome = expense.type === "income";
   const catList = isIncome ? INCOME_CATEGORIES : CATEGORIES;
   const cat =
     catList.find((c) => c.id === expense.category) ||
     catList[catList.length - 1];
+
+  function memberName(uid) {
+    const m = members.find((x) => x.uid === uid);
+    if (!m) return "Unknown";
+    return m.uid === user.uid ? (
+      <span class="et-grp-exp-debt-badge">You</span>
+    ) : (
+      <span class="et-grp-exp-debt-badge">{capitalizeEachWord(m.name)}</span>
+    );
+  }
+
+  function splitLabel(splitAmong) {
+    if (splitAmong.length === members.length)
+      return <span class="et-grp-exp-debt-badge">Everyone</span>;
+    // if (splitAmong.length <= 3) return splitAmong.map(memberName).join(", ");
+    // return `${splitAmong.map(memberName).join(", ")}`;
+    return splitAmong.map(memberName);
+  }
 
   return (
     <div className="et-modal-overlay" onClick={onClose}>
@@ -61,6 +96,18 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose, onEditR
 
         {/* ── Info rows ── */}
         <div className="et-detail-rows">
+          {isGroupExpense && (
+            <div className="et-grp-split-row">
+              <span className="et-grp-paidby">
+                <i className="fa fa-hand-holding-dollar" />{" "}
+                {memberName(expense.paidBy)}
+              </span>
+              <span className="et-grp-split-dot">paid to</span>
+              <span className="et-grp-split-info flex-row-wrap">
+                {splitLabel(expense.splitAmong ?? [])}
+              </span>
+            </div>
+          )}
           {expense.description && (
             <div className="et-detail-row">
               <span className="et-detail-row-icon">
@@ -103,15 +150,41 @@ export default function ExpenseDetailModal({ expense, onDelete, onClose, onEditR
           <button className="et-btn et-btn--cancel" onClick={onClose}>
             Close
           </button>
-          <button
-            className="et-btn et-btn"
-            onClick={() => {
-              onClose();
-              onEditRequest(expense)
-            }}
-          >
-            <i className="fa fa-edit" /> Edit
-          </button> 
+          {/* {!isGroupExpense && (
+            <button
+              className="et-btn et-btn"
+              onClick={() => {
+                onClose();
+                onEditRequest(expense);
+              }}
+            >
+              <i className="fa fa-edit" /> Edit
+            </button>
+          )}
+
+          {isGroupExpense && canEdit && (
+            <button
+              className="et-btn et-btn"
+              onClick={() => {
+                onClose();
+                onEditRequest(expense);
+              }}
+            >
+              <i className="fa fa-edit" /> Edit
+            </button>
+          )} */}
+
+          {showEditButton && (
+            <button
+              className="et-btn et-btn"
+              onClick={() => {
+                onClose();
+                onEditRequest(expense);
+              }}
+            >
+              <i className="fa fa-edit" /> Edit
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -8,6 +8,8 @@ import {
   deleteDoc,
   query,
   orderBy,
+  where,
+  limit,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
@@ -144,4 +146,121 @@ export async function deleteOccasionExpense(uid, occasionId, expenseId) {
 export async function updateOccasionExpense(uid, occasionId, expense) {
   const { id, ...rest } = expense;
   await updateDoc(occasionExpenseDoc(uid, occasionId, id), rest);
+}
+
+// ── User Search ────────────────────────────────────────────────────────────
+
+// Prefix search on nameLower field — returns up to 8 matching users.
+export async function searchUsers(queryStr) {
+  if (!queryStr.trim()) return [];
+  const q = queryStr.toLowerCase();
+  const snap = await getDocs(
+    query(
+      collection(db, "users"),
+      where("nameLower", ">=", q),
+      where("nameLower", "<=", q + "\uf8ff"),
+      limit(8),
+    ),
+  );
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      uid: d.id,
+      displayName: data.displayName ?? "Unknown",
+      email: data.email ?? "",
+      photoURL: data.photoURL ?? null,
+    };
+  });
+}
+
+// ── Group CRUD (top-level: groups/{groupId}) ───────────────────────────────
+
+const groupsTopCol = () => collection(db, "groups");
+const groupTopDoc = (groupId) => doc(db, "groups", groupId);
+const groupExpensesCol = (groupId) =>
+  collection(db, "groups", groupId, "expenses");
+const groupExpenseDoc = (groupId, expenseId) =>
+  doc(db, "groups", groupId, "expenses", expenseId);
+
+// Load all groups where the user is a member (uses memberUIDs array-contains).
+// Sorted client-side to avoid needing a composite index.
+export async function loadGroups(uid) {
+  const snap = await getDocs(
+    query(
+      groupsTopCol(),
+      where("memberUIDs", "array-contains", uid),
+    ),
+  );
+  return snap.docs
+    .map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        name: data.name ?? "Unnamed",
+        emoji: data.emoji ?? "👥",
+        description: data.description ?? "",
+        members: data.members ?? [],
+        memberUIDs: data.memberUIDs ?? [],
+        adminUID: data.adminUID ?? "",
+        createdAt: data.createdAt?.toMillis?.() ?? data.createdAt ?? Date.now(),
+      };
+    })
+    .sort((a, b) => b.createdAt - a.createdAt);
+}
+
+export async function addGroup(group) {
+  const { id, ...rest } = group;
+  await setDoc(groupTopDoc(id), { ...rest, createdAt: serverTimestamp() });
+}
+
+export async function updateGroup(groupId, updates) {
+  await updateDoc(groupTopDoc(groupId), updates);
+}
+
+// Deletes the group doc and all its expense sub-documents.
+export async function deleteGroup(groupId) {
+  const snap = await getDocs(groupExpensesCol(groupId));
+  for (const d of snap.docs) {
+    await deleteDoc(d.ref);
+  }
+  await deleteDoc(groupTopDoc(groupId));
+}
+
+// ── Group Expense CRUD ─────────────────────────────────────────────────────
+
+export async function loadGroupExpenses(groupId) {
+  const q = query(groupExpensesCol(groupId), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      description: data.description ?? "",
+      amount: data.amount ?? 0,
+      paidBy: data.paidBy ?? "",
+      splitAmong: data.splitAmong ?? [],
+      category: data.category ?? "other",
+      date: data.date ?? "",
+      time: data.time ?? "00:00",
+      addedBy: data.addedBy ?? "",
+      createdAt: data.createdAt?.toMillis?.() ?? data.createdAt ?? Date.now(),
+    };
+  });
+}
+
+export async function addGroupExpense(groupId, expense) {
+  const { id, ...rest } = expense;
+  await setDoc(groupExpenseDoc(groupId, id), {
+    ...rest,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function updateGroupExpense(groupId, expense) {
+  const { id, ...rest } = expense;
+  await updateDoc(groupExpenseDoc(groupId, id), rest);
+}
+
+export async function deleteGroupExpense(groupId, expenseId) {
+  await deleteDoc(groupExpenseDoc(groupId, expenseId));
 }

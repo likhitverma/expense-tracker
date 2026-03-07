@@ -41,6 +41,10 @@ function App() {
   // ── Listen to Firebase auth state ────────────────────────────────────────
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (fbUser) => {
+      if (fbUser) {
+        // Always refresh the user profile so nameLower/photoURL stay current
+        saveUserToFirestore(fbUser).catch(() => {});
+      }
       setUser(
         fbUser
           ? {

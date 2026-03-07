@@ -577,7 +577,7 @@ export default function DownloadModal({ expenses, onClose, toast }) {
               <span>
                 Spent: <strong>₹ {spent.toFixed(2)}</strong>
               </span>
-              {hasIncome && (
+              {/* {hasIncome && (
                 <>
                   <span className="dl-preview-dot">·</span>
                   <span>
@@ -591,7 +591,7 @@ export default function DownloadModal({ expenses, onClose, toast }) {
                     </strong>
                   </span>
                 </>
-              )}
+              )} */}
             </>
           )}
         </div>
@@ -599,21 +599,6 @@ export default function DownloadModal({ expenses, onClose, toast }) {
         {/* ── Format buttons ── */}
         <div className="dl-section-label">Choose Format</div>
         <div className="dl-format-row">
-          <button
-            className={`dl-format-btn${!hasData ? " dl-format-btn--disabled" : ""}`}
-            onClick={() => handleDownload("csv")}
-            disabled={!hasData}
-          >
-            <div className="dl-format-icon" style={{ background: "#F0FDF4" }}>
-              📊
-            </div>
-            <div className="dl-format-text">
-              <div className="dl-format-label">CSV Spreadsheet</div>
-              <div className="dl-format-sub">Open in Excel · Google Sheets</div>
-            </div>
-            <i className="fa fa-download dl-format-arrow" />
-          </button>
-
           <button
             className={`dl-format-btn${!hasData ? " dl-format-btn--disabled" : ""}`}
             onClick={() => handleDownload("pdf")}
@@ -627,6 +612,20 @@ export default function DownloadModal({ expenses, onClose, toast }) {
               <div className="dl-format-sub">
                 Formatted report · Print-ready
               </div>
+            </div>
+            <i className="fa fa-download dl-format-arrow" />
+          </button>
+          <button
+            className={`dl-format-btn${!hasData ? " dl-format-btn--disabled" : ""}`}
+            onClick={() => handleDownload("csv")}
+            disabled={!hasData}
+          >
+            <div className="dl-format-icon" style={{ background: "#F0FDF4" }}>
+              📊
+            </div>
+            <div className="dl-format-text">
+              <div className="dl-format-label">CSV Spreadsheet</div>
+              <div className="dl-format-sub">Open in Excel · Google Sheets</div>
             </div>
             <i className="fa fa-download dl-format-arrow" />
           </button>
