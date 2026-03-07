@@ -121,7 +121,8 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   const [groupExpensesLoading, setGroupExpensesLoading] = useState(false);
   const [showAddGroupModal, setShowAddGroupModal] = useState(false);
   const [savingGroup, setSavingGroup] = useState(false);
-  const [showAddGroupExpenseModal, setShowAddGroupExpenseModal] = useState(false);
+  const [showAddGroupExpenseModal, setShowAddGroupExpenseModal] =
+    useState(false);
   const [savingGroupExpense, setSavingGroupExpense] = useState(false);
   const [editingGroupExpense, setEditingGroupExpense] = useState(null);
   const [showEditGroupModal, setShowEditGroupModal] = useState(false);
@@ -165,7 +166,9 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   const currentMonthStr = getMonthStr(selectedDate);
 
   const byDate = expenses.filter((e) => e.date === selectedDate);
-  const byDateExpenses = byDate.filter((e) => (e.type || "expense") === "expense");
+  const byDateExpenses = byDate.filter(
+    (e) => (e.type || "expense") === "expense",
+  );
   const byDateIncome = byDate.filter((e) => e.type === "income");
 
   const filteredByCategory =
@@ -291,7 +294,8 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
   }, [view, groupsLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Load expenses for selected group ─────────────────────────────────────
-  useEffect(() => {
+
+  function loadExpensesForSelectedGroup() {
     if (!selectedGroup) return;
     setGroupExpensesLoading(true);
     loadGroupExpenses(selectedGroup.id)
@@ -304,6 +308,9 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         toast?.("Failed to load expenses.", "error");
         setGroupExpensesLoading(false);
       });
+  }
+  useEffect(() => {
+    loadExpensesForSelectedGroup();
   }, [selectedGroup?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Handlers ──────────────────────────────────────────────────────────────
@@ -675,7 +682,10 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         {featureFlags.TABS.occasions && (
           <button
             className={`et-tab${view === "occasions" ? " et-tab--active" : ""}`}
-            onClick={() => { setView("occasions"); setSelectedOccasion(null); }}
+            onClick={() => {
+              setView("occasions");
+              setSelectedOccasion(null);
+            }}
           >
             <i className="fa fa-layer-group" /> Occasions
             {occasions.length > 0 && (
@@ -686,7 +696,10 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         {featureFlags.TABS.groups && (
           <button
             className={`et-tab${view === "groups" ? " et-tab--active" : ""}`}
-            onClick={() => { setView("groups"); setSelectedGroup(null); }}
+            onClick={() => {
+              setView("groups");
+              setSelectedGroup(null);
+            }}
           >
             <i className="fa fa-users" /> Groups
             {groups.length > 0 && (
@@ -784,7 +797,9 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             enableIncomeTracking={featureFlags.ENABLE_INCOME_TRACKING}
             onBack={() => setSelectedOccasion(null)}
             onAddExpense={openAddModalForOccasion}
-            onEditRequest={(expense) => openEditModal(expense, "occasion-expense")}
+            onEditRequest={(expense) =>
+              openEditModal(expense, "occasion-expense")
+            }
             onDeleteRequest={requestDeleteOccasionExpense}
           />
         )}
@@ -810,11 +825,15 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
             deletingId={deletingId}
             user={user}
             onBack={() => setSelectedGroup(null)}
-            onAddExpense={() => { setEditingGroupExpense(null); setShowAddGroupExpenseModal(true); }}
+            onAddExpense={() => {
+              setEditingGroupExpense(null);
+              setShowAddGroupExpenseModal(true);
+            }}
             onDeleteExpense={requestDeleteGroupExpense}
             onEditExpense={openEditGroupExpense}
             onEditGroup={() => setShowEditGroupModal(true)}
             onManageMembers={() => setShowManageMembersModal(true)}
+            loadExpensesForSelectedGroup={loadExpensesForSelectedGroup}
           />
         )}
       </div>
@@ -835,10 +854,14 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
         }}
         title={
           view === "occasions"
-            ? selectedOccasion ? "Add expense to occasion" : "New occasion"
+            ? selectedOccasion
+              ? "Add expense to occasion"
+              : "New occasion"
             : view === "groups"
-            ? selectedGroup ? "Add group expense" : "New group"
-            : "Add expense"
+              ? selectedGroup
+                ? "Add group expense"
+                : "New group"
+              : "Add expense"
         }
       >
         <i className="fa fa-plus" />
@@ -847,7 +870,11 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       {/* ── Modals ── */}
       {showModal && (
         <AddExpenseModal
-          onClose={() => { setShowModal(false); setAddingToOccasion(false); setEditingExpense(null); }}
+          onClose={() => {
+            setShowModal(false);
+            setAddingToOccasion(false);
+            setEditingExpense(null);
+          }}
           form={form}
           setForm={setForm}
           formErrors={formErrors}
@@ -872,7 +899,10 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
       <OccasionInfoModal
         occasion={infoOccasion}
         onClose={() => setInfoOccasion(null)}
-        onDelete={(occ) => { setInfoOccasion(null); requestDeleteOccasionCard(occ); }}
+        onDelete={(occ) => {
+          setInfoOccasion(null);
+          requestDeleteOccasionCard(occ);
+        }}
       />
 
       {showAddGroupModal && (
@@ -886,11 +916,16 @@ export default function ExpenseTracker({ user, onLogout, toast }) {
 
       {showAddGroupExpenseModal && selectedGroup && (
         <AddGroupExpenseModal
-          onClose={() => { setShowAddGroupExpenseModal(false); setEditingGroupExpense(null); }}
+          onClose={() => {
+            setShowAddGroupExpenseModal(false);
+            setEditingGroupExpense(null);
+          }}
           onSubmit={handleAddGroupExpense}
           saving={savingGroupExpense}
           members={selectedGroup.members}
           editingExpense={editingGroupExpense}
+          user={user}
+          group={selectedGroup}
         />
       )}
 

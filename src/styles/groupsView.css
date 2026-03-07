@@ -38,7 +38,9 @@
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.15s, transform 0.15s;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
 }
 .et-grp-new-btn:hover {
   opacity: 0.88;
@@ -61,7 +63,10 @@
   border-radius: 16px;
   padding: 14px 14px 14px 16px;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    border-color 0.15s;
 }
 .et-grp-card:hover {
   transform: translateY(-2px);
@@ -124,6 +129,16 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.et-grp-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.grp-ref-btn {
+  background-color: var(--primary);
+  color: #fff;
 }
 
 .et-grp-detail-hero {
@@ -235,8 +250,12 @@
   color: var(--text-muted);
   text-align: center;
 }
-.et-grp-avatar-bal.pos { color: #10b981; }
-.et-grp-avatar-bal.neg { color: #ef4444; }
+.et-grp-avatar-bal.pos {
+  color: #10b981;
+}
+.et-grp-avatar-bal.neg {
+  color: #ef4444;
+}
 
 /* ── Group expense card ── */
 .et-grp-expense-card {
@@ -248,7 +267,9 @@
   border-radius: 14px;
   padding: 12px 12px 12px 14px;
   border-left: 4px solid var(--cat-color, var(--border));
-  transition: opacity 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
 }
 .et-grp-expense-card.et-deleting {
   opacity: 0.4;
@@ -279,7 +300,9 @@
 
 .et-grp-split-dot {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  font-weight: 800;
+  font-style: italic;
+  color: var(--text);
 }
 
 .et-grp-split-info {

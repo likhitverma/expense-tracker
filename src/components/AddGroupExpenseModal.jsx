@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { CATEGORIES, CURRENCY, getTodayStr, getCurrentTimeStr } from "./constants";
+import {
+  CATEGORIES,
+  CURRENCY,
+  getTodayStr,
+  getCurrentTimeStr,
+} from "./constants";
 import { uid } from "../utils/helpers";
 
 export default function AddGroupExpenseModal({
@@ -8,7 +13,10 @@ export default function AddGroupExpenseModal({
   saving,
   members,
   editingExpense,
+  user,
+  group,
 }) {
+  const isAdmin = group.adminUID === user.uid;
   const selfMember = members.find((m) => m.isSelf) || members[0];
   const isEditing = !!editingExpense;
 
@@ -18,11 +26,14 @@ export default function AddGroupExpenseModal({
     category: isEditing ? editingExpense.category : "food",
     date: isEditing ? editingExpense.date : getTodayStr(),
     time: isEditing ? editingExpense.time : getCurrentTimeStr(),
-    paidBy: isEditing ? editingExpense.paidBy : (selfMember?.uid || ""),
-    splitAmong: isEditing ? editingExpense.splitAmong : members.map((m) => m.uid),
+    // paidBy: isEditing ? editingExpense.paidBy : selfMember?.uid || "",
+    paidBy: user.uid,
+    splitAmong: isEditing
+      ? editingExpense.splitAmong
+      : members.map((m) => m.uid),
   });
   const [errors, setErrors] = useState({});
-
+  const [isAllSplitMembersSelected, setAllSplitMemberSelected] = useState(true);
   function toggleSplit(uid) {
     setForm((f) => {
       const has = f.splitAmong.includes(uid);
@@ -37,8 +48,14 @@ export default function AddGroupExpenseModal({
     setErrors((e) => ({ ...e, splitAmong: null }));
   }
 
-  function selectAll() {
-    setForm((f) => ({ ...f, splitAmong: members.map((m) => m.uid) }));
+  function selectAll(isAll) {
+    if (isAll) {
+      setForm((f) => ({ ...f, splitAmong: members.map((m) => m.uid) }));
+      setAllSplitMemberSelected(true);
+    } else {
+      setForm((f) => ({ ...f, splitAmong: [user.uid] }));
+      setAllSplitMemberSelected(false);
+    }
   }
 
   const perPersonShare =
@@ -71,12 +88,16 @@ export default function AddGroupExpenseModal({
   }
 
   function memberLabel(m) {
-    return m.isSelf ? "You" : m.name;
+    // return m.isSelf ? "You" : m.name;
+    return m.uid === user.uid ? "You" : m.name;
   }
 
   return (
     <div className="et-modal-overlay" onClick={onClose}>
-      <div className="et-modal et-modal--tall" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="et-modal et-modal--tall"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="et-modal-header">
           <div className="et-modal-title-wrap">
             <span>💸</span>
@@ -88,6 +109,122 @@ export default function AddGroupExpenseModal({
         </div>
 
         <div className="et-modal-body">
+          {/* Paid by */}
+          <div className="et-form-group">
+            <label>Paid by</label>
+            <div
+              className="et-grp-member-btns"
+              style={{ borderColor: "green !important" }}
+            >
+              <button
+                key={user.uid}
+                type="button"
+                className={`et-grp-member-btn et-grp-member-btn--selected`}
+                onClick={() => setForm((f) => ({ ...f, paidBy: user.uid }))}
+                disabled={true}
+              >
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="et-user-avatar"
+                    referrerPolicy="no-referrer"
+                    style={{ width: 18, height: 18 }}
+                  />
+                ) : user.isSelf ? (
+                  "🧑"
+                ) : (
+                  "👤"
+                )}{" "}
+                You
+              </button>
+
+              {/* {members.map(
+                (m) =>
+                  m.uid === user.uid && (
+                    <button
+                      key={m.uid}
+                      type="button"
+                      className={`et-grp-member-btn${form.paidBy === m.uid ? " et-grp-member-btn--selected" : ""}`}
+                      onClick={() => setForm((f) => ({ ...f, paidBy: m.uid }))}
+                      disabled={true}
+                    >
+                      {m.photoURL ? (
+                        <img
+                          src={m.photoURL}
+                          alt=""
+                          className="et-user-avatar"
+                          referrerPolicy="no-referrer"
+                          style={{ width: 18, height: 18 }}
+                        />
+                      ) : m.isSelf ? (
+                        "🧑"
+                      ) : (
+                        "👤"
+                      )}{" "}
+                      {memberLabel(m)}
+                    </button>
+                  ),
+              )} */}
+            </div>
+          </div>
+
+          {/* Split among */}
+          <div className="et-form-group">
+            <div className="et-split-label-row">
+              <label>Split among</label>
+              <button
+                type="button"
+                className="et-split-all-btn"
+                onClick={() => selectAll(!isAllSplitMembersSelected)}
+              >
+                {isAllSplitMembersSelected ? "Unselect All" : "Select All"}
+              </button>
+            </div>
+            <div className="et-grp-member-btns">
+              {members.map((m) => (
+                <button
+                  key={m.uid}
+                  type="button"
+                  className={`et-grp-member-btn${form.splitAmong.includes(m.uid) ? " et-grp-member-btn--selected" : ""}`}
+                  onClick={() => toggleSplit(m.uid)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.splitAmong.includes(m.uid)}
+                  />
+                  {m.photoURL ? (
+                    <img
+                      src={m.photoURL}
+                      alt=""
+                      className="et-user-avatar"
+                      referrerPolicy="no-referrer"
+                      style={{ width: 18, height: 18 }}
+                    />
+                  ) : m.isSelf ? (
+                    "🧑"
+                  ) : (
+                    "👤"
+                  )}{" "}
+                  {memberLabel(m)}
+                </button>
+              ))}
+            </div>
+            {perPersonShare && (
+              <div className="et-split-info">
+                <i className="fa fa-equals" /> Each pays:{" "}
+                <strong>
+                  {CURRENCY} {perPersonShare}
+                </strong>{" "}
+                ({form.splitAmong.length} people)
+              </div>
+            )}
+            {errors.splitAmong && (
+              <span className="et-field-error">
+                <i className="fa fa-circle-exclamation" /> {errors.splitAmong}
+              </span>
+            )}
+          </div>
           {/* Amount */}
           <div className="et-form-group et-form-group--large">
             <label htmlFor="et-ge-amount">Amount</label>
@@ -113,6 +250,7 @@ export default function AddGroupExpenseModal({
                 <i className="fa fa-circle-exclamation" /> {errors.amount}
               </span>
             )}
+ 
           </div>
 
           {/* Description */}
@@ -129,7 +267,9 @@ export default function AddGroupExpenseModal({
               placeholder="e.g. Ice cream, Hotel bill, Taxi…"
               maxLength={100}
               className={`et-input${errors.description ? " et-input--error" : ""}`}
-              onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSubmit();
+              }}
             />
             {errors.description && (
               <span className="et-field-error">
@@ -141,19 +281,19 @@ export default function AddGroupExpenseModal({
           {/* Category */}
           <div className="et-form-group">
             <label>Category</label>
-            <div className="et-cat-selector">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
-                  style={{ "--cat-color": cat.color }}
-                  onClick={() => setForm((f) => ({ ...f, category: cat.id }))}
-                >
-                  <span className="et-cat-btn-icon">{cat.icon}</span>
-                  <span className="et-cat-btn-label">{cat.label}</span>
-                </button>
-              ))}
+            <div className="et-cat-selector"> 
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`et-cat-btn${form.category === cat.id ? " et-cat-btn--selected" : ""}`}
+                    style={{ "--cat-color": cat.color }}
+                    onClick={() => setForm((f) => ({ ...f, category: cat.id }))}
+                  >
+                    <span className="et-cat-btn-icon">{cat.icon}</span>
+                    <span className="et-cat-btn-label">{cat.label}</span>
+                  </button>
+                ))} 
             </div>
           </div>
 
@@ -165,7 +305,9 @@ export default function AddGroupExpenseModal({
                 id="et-ge-time"
                 type="time"
                 value={form.time}
-                onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, time: e.target.value }))
+                }
                 className="et-input"
               />
             </div>
@@ -174,67 +316,12 @@ export default function AddGroupExpenseModal({
               <input
                 type="date"
                 value={form.date}
-                onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, date: e.target.value }))
+                }
                 className="et-input"
               />
             </div>
-          </div>
-
-          {/* Paid by */}
-          <div className="et-form-group">
-            <label>Paid by</label>
-            <div className="et-grp-member-btns">
-              {members.map((m) => (
-                <button
-                  key={m.uid}
-                  type="button"
-                  className={`et-grp-member-btn${form.paidBy === m.uid ? " et-grp-member-btn--selected" : ""}`}
-                  onClick={() => setForm((f) => ({ ...f, paidBy: m.uid }))}
-                >
-                  {m.photoURL ? (
-                    <img src={m.photoURL} alt="" className="et-user-avatar" referrerPolicy="no-referrer" style={{ width: 18, height: 18 }} />
-                  ) : m.isSelf ? "🧑" : "👤"}{" "}
-                  {memberLabel(m)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Split among */}
-          <div className="et-form-group">
-            <div className="et-split-label-row">
-              <label>Split among</label>
-              <button type="button" className="et-split-all-btn" onClick={selectAll}>
-                Select All
-              </button>
-            </div>
-            <div className="et-grp-member-btns">
-              {members.map((m) => (
-                <button
-                  key={m.uid}
-                  type="button"
-                  className={`et-grp-member-btn${form.splitAmong.includes(m.uid) ? " et-grp-member-btn--selected" : ""}`}
-                  onClick={() => toggleSplit(m.uid)}
-                >
-                  {m.photoURL ? (
-                    <img src={m.photoURL} alt="" className="et-user-avatar" referrerPolicy="no-referrer" style={{ width: 18, height: 18 }} />
-                  ) : m.isSelf ? "🧑" : "👤"}{" "}
-                  {memberLabel(m)}
-                </button>
-              ))}
-            </div>
-            {perPersonShare && (
-              <div className="et-split-info">
-                <i className="fa fa-equals" /> Each pays:{" "}
-                <strong>{CURRENCY} {perPersonShare}</strong>{" "}
-                ({form.splitAmong.length} people)
-              </div>
-            )}
-            {errors.splitAmong && (
-              <span className="et-field-error">
-                <i className="fa fa-circle-exclamation" /> {errors.splitAmong}
-              </span>
-            )}
           </div>
         </div>
 
@@ -247,8 +334,18 @@ export default function AddGroupExpenseModal({
             onClick={handleSubmit}
             disabled={saving}
           >
-            {saving ? <span className="et-btn-spinner" /> : <i className={`fa fa-${isEditing ? "pen" : "plus"}`} />}
-            {saving ? (isEditing ? "Saving…" : "Adding…") : isEditing ? "Save Changes" : "Add Expense"}
+            {saving ? (
+              <span className="et-btn-spinner" />
+            ) : (
+              <i className={`fa fa-${isEditing ? "pen" : "plus"}`} />
+            )}
+            {saving
+              ? isEditing
+                ? "Saving…"
+                : "Adding…"
+              : isEditing
+                ? "Save Changes"
+                : "Add Expense"}
           </button>
         </div>
       </div>

@@ -1,4 +1,9 @@
-import { CATEGORIES, formatCurrency, formatShortDate, formatTime } from "./constants";
+import {
+  CATEGORIES,
+  formatCurrency,
+  formatShortDate,
+  formatTime,
+} from "./constants";
 import SettlementPanel from "./SettlementPanel";
 import { computeBalances, settleDebts } from "../utils/groupSettlement";
 
@@ -14,6 +19,7 @@ export default function GroupDetailView({
   onEditExpense,
   onEditGroup,
   onManageMembers,
+  loadExpensesForSelectedGroup
 }) {
   const { members } = group;
   const isAdmin = group.adminUID === user.uid;
@@ -42,8 +48,7 @@ export default function GroupDetailView({
 
   function splitLabel(splitAmong) {
     if (splitAmong.length === members.length) return "Everyone";
-    if (splitAmong.length <= 3)
-      return splitAmong.map(memberName).join(", ");
+    if (splitAmong.length <= 3) return splitAmong.map(memberName).join(", ");
     return `${splitAmong.slice(0, 2).map(memberName).join(", ")} +${splitAmong.length - 2}`;
   }
 
@@ -63,11 +68,17 @@ export default function GroupDetailView({
 
   return (
     <div className="et-grp-detail">
-      {/* Back */}
-      <button className="et-occ-back-btn" onClick={onBack}>
-        <i className="fa fa-arrow-left" /> All Groups
-      </button>
+      <div className="et-grp-nav-buttons">
+        {/* Back */} 
+        <button className="et-occ-back-btn" onClick={onBack}>
+          <i className="fa fa-arrow-left" /> All Groups
+        </button>
 
+        {/* Referesh Data */}
+        <button className="et-occ-back-btn grp-ref-btn" onClick={loadExpensesForSelectedGroup}>
+          <i className="fa fa-refresh" /> Referesh
+        </button>
+      </div>
       {/* Hero */}
       <div className="et-grp-detail-hero">
         <span className="et-grp-detail-emoji">{group.emoji}</span>
@@ -115,8 +126,8 @@ export default function GroupDetailView({
               {selfBalance > 0.005
                 ? "others owe you"
                 : selfBalance < -0.005
-                ? "you owe others"
-                : "all settled"}
+                  ? "you owe others"
+                  : "all settled"}
             </div>
           </div>
         </div>
@@ -133,6 +144,14 @@ export default function GroupDetailView({
         </div>
       </div>
 
+      {/* Settlement summary */}
+      {expenses.length > 0 && (
+        <SettlementPanel
+          settlements={settlements}
+          members={members}
+          selfUID={user.uid}
+        />
+      )}
       {/* Members bar */}
       <div className="et-grp-members-bar">
         <div className="et-grp-members-label">
@@ -157,9 +176,17 @@ export default function GroupDetailView({
                       alt=""
                       className="et-user-avatar"
                       referrerPolicy="no-referrer"
-                      style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                      }}
                     />
-                  ) : isSelf ? "🧑" : "👤"}
+                  ) : isSelf ? (
+                    "🧑"
+                  ) : (
+                    "👤"
+                  )}
                 </div>
                 <div className="et-grp-avatar-name">
                   {isSelf ? "You" : m.name.split(" ")[0]}
@@ -216,7 +243,7 @@ export default function GroupDetailView({
                   ? expense.paidBy === selfMember.uid
                   : false;
 
-                // const paidByMe = expense.addedBy === user.uid; 
+                // const paidByMe = expense.addedBy === user.uid;
                 const canEdit = expense.addedBy === user.uid;
 
                 return (
@@ -239,15 +266,14 @@ export default function GroupDetailView({
                           {memberName(expense.paidBy)}
                           {/* {memberName(expense.addedBy)} */}
                         </span>
-                        <span className="et-grp-split-dot">·</span>
+                        <span className="et-grp-split-dot">to</span>
                         <span className="et-grp-split-info">
                           {splitLabel(expense.splitAmong ?? [])}
                         </span>
                       </div>
                       {selfInSplit && (
                         <div className="et-grp-your-share">
-                          Your share:{" "}
-                          <strong>{formatCurrency(share)}</strong>
+                          Your share: <strong>{formatCurrency(share)}</strong>
                         </div>
                       )}
                       <div
@@ -256,8 +282,7 @@ export default function GroupDetailView({
                       >
                         <i className="fa fa-calendar" />{" "}
                         {formatShortDate(expense.date)} ·{" "}
-                        <i className="fa fa-clock" />{" "}
-                        {formatTime(expense.time)}
+                        <i className="fa fa-clock" /> {formatTime(expense.time)}
                       </div>
                     </div>
                     <div className="et-grp-expense-right">
@@ -289,15 +314,6 @@ export default function GroupDetailView({
           </div>
         )}
       </div>
-
-      {/* Settlement summary */}
-      {expenses.length > 0 && (
-        <SettlementPanel
-          settlements={settlements}
-          members={members}
-          selfUID={user.uid}
-        />
-      )}
     </div>
   );
 }

@@ -577,7 +577,7 @@ export default function DownloadModal({ expenses, onClose, toast }) {
               <span>
                 Spent: <strong>₹ {spent.toFixed(2)}</strong>
               </span>
-              {hasIncome && (
+              {/* {hasIncome && (
                 <>
                   <span className="dl-preview-dot">·</span>
                   <span>
@@ -591,10 +591,11 @@ export default function DownloadModal({ expenses, onClose, toast }) {
                     </strong>
                   </span>
                 </>
-              )}
+              )} */}
             </>
           )}
         </div>
+ 
 
         {/* ── Format buttons ── */}
         <div className="dl-section-label">Choose Format</div>
