@@ -100,9 +100,15 @@ export default function MonthlyView({
                           className={`et-month-net-badge${month.net >= 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
                         >
                           {month.net >= 0 ? "+" : ""}
-                          {formatCurrency(month.net)} net
+                          {formatCurrency(month.net)} Net Spent
                         </span>
                       )}
+                      <span
+                        className={`et-month-net-badge${month.earned > 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
+                      >
+                        {month.earned >= 0 ? "+" : ""}
+                        {formatCurrency(month.earned)} Earned
+                      </span>
                     </div>
                     <i
                       className={`fa fa-chevron-down et-month-chevron${isOpen ? " et-month-chevron--open" : ""}`}

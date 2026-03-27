@@ -150,15 +150,18 @@ export default function DailyView({
           >
             <span className="et-card-icon">{dayNet >= 0 ? "📈" : "📉"}</span>
             <div>
-              <div className="et-card-label">Net Balance</div>
+              <div className="et-card-label">Today's Net Balance</div>
               <div
                 className={`et-card-amount${dayNet >= 0 ? " et-card-amount--positive" : " et-card-amount--negative"}`}
               >
                 {dayNet >= 0 ? "+" : ""}
                 {formatCurrency(dayNet)}
               </div>
-              <div className="et-card-count">
-                Month: {monthEarned > monthSpent ? "+" : ""}
+              <div className="et-card-count et-card-count-badge et-card-count-badge--negative">  
+                  Month Spent: {formatCurrency(-monthSpent)} 
+              </div>
+              <div className={`et-card-count et-card-count-badge et-card-count-badge${monthEarned > monthSpent ? "--positive" : "--negative"}`}>
+                Month Net: {monthEarned > monthSpent ? "+" : ""}
                 {formatCurrency(monthEarned - monthSpent)}
               </div>
             </div>
