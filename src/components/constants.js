@@ -1,13 +1,22 @@
 // ── Categories ─────────────────────────────────────────────────────────────
 export const CATEGORIES = [
   // 🍔 Food & Drinks
-  { id: "food", label: "Food", icon: "🍔", color: "#f59e0b" },
+  { id: "food", label: "Food", icon: "🍽️", color: "#f59e0b" },
+  { id: "vegetable", label: "Vegetable", icon: "🥕", color: "#188f08" },
+  { id: "milk", label: "Milk & Dairy", icon: "🥛", color: "#fff7e3" },
   { id: "fruits", label: "Fruits", icon: "🍎", color: "#ec4899" },
-  { id: "tea", label: "Tea", icon: "🍵", color: "#a16207" },
+  // { id: "tea", label: "Tea", icon: "🍵", color: "#a16207" },
   { id: "coffee", label: "Coffee / Tea", icon: "☕", color: "#92400e" },
+  { id: "coldrink", label: "Cold Drink", icon: "🥤", color: "#282928" },
   { id: "snacks", label: "Snacks", icon: "🍟", color: "#f59e0b" },
-  { id: "maggie", label: "Maggie", icon: "🍜", color: "#f59e0b" },
   { id: "groceries", label: "Groceries", icon: "🛒", color: "#22c55e" },
+  { id: "maggie", label: "Maggie", icon: "🍜", color: "#f59e0b" },
+  
+
+  // 🙏 Spiritual & Social
+  { id: "temple", label: "Temple", icon: "🛕", color: "#0ea5e9" },
+  { id: "donation", label: "Donation", icon: "🙏", color: "#f472b6" },
+  { id: "pets", label: "Pets", icon: "🐶", color: "#a3e635" },
 
   // 🏠 Home & Living
   { id: "rent", label: "Rent", icon: "🏠", color: "#6366f1" },
@@ -54,11 +63,6 @@ export const CATEGORIES = [
   // 💰 Finance
   { id: "investment", label: "Investment", icon: "📈", color: "#22c55e" },
   { id: "tax", label: "Tax", icon: "💰", color: "#dc2626" },
-
-  // 🙏 Spiritual & Social
-  { id: "temple", label: "Temple", icon: "🛕", color: "#0ea5e9" },
-  { id: "donation", label: "Donation", icon: "🙏", color: "#f472b6" },
-  { id: "pets", label: "Pets", icon: "🐶", color: "#a3e635" },
 
   // 💡 Other
   { id: "other", label: "Other", icon: "💡", color: "#6b7280" },

@@ -100,15 +100,17 @@ export default function MonthlyView({
                           className={`et-month-net-badge${month.net >= 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
                         >
                           {month.net >= 0 ? "+" : ""}
-                          {formatCurrency(month.net)} Net Spent
+                          {formatCurrency(month.net)} Net
                         </span>
                       )}
-                      <span
-                        className={`et-month-net-badge${month.earned > 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
-                      >
-                        {month.earned >= 0 ? "+" : ""}
-                        {formatCurrency(month.earned)} Earned
-                      </span>
+                      {month.earned >= 0 && (
+                        <span
+                          className={`et-month-net-badge${month.earned > 0 ? " et-month-net-badge--positive" : " et-month-net-badge--negative"}`}
+                        >
+                          {month.earned > 0 ? "+" : ""}
+                          {formatCurrency(month.earned)} Earned
+                        </span>
+                      )}
                     </div>
                     <i
                       className={`fa fa-chevron-down et-month-chevron${isOpen ? " et-month-chevron--open" : ""}`}
@@ -146,12 +148,20 @@ export default function MonthlyView({
                             <span className="et-day-total">
                               {formatCurrency(day.spent)}
                             </span>
-                            {enableIncomeTracking && day.earned > 0 && (
+                            {/* {enableIncomeTracking && day.earned > 0 && (
                               <span
                                 className={`et-day-net${day.net >= 0 ? " et-day-net--positive" : " et-day-net--negative"}`}
                               >
                                 {day.net >= 0 ? "+" : ""}
                                 {formatCurrency(day.net)}
+                              </span>
+                            )} */}
+                            {day.earned > 0 && (
+                              <span
+                                className={`et-day-net${day.earned >= 0 ? " et-day-net--positive" : " et-day-net--negative"}`}
+                              >
+                                {day.earned >= 0 ? "+" : ""}
+                                {formatCurrency(day.earned)}
                               </span>
                             )}
                           </div>
